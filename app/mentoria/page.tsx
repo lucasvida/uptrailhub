@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -29,6 +29,9 @@ import {
   Zap,
   Brain,
   Sparkles,
+  Crown,
+  Lock,
+  TrendingUp,
 } from "lucide-react"
 import { mentorsData, type Mentor } from "@/lib/data"
 
@@ -68,13 +71,39 @@ const aiMentors: AIMentor[] = [
   },
 ]
 
+interface UserData {
+  id: string
+  email: string
+  signature: "free" | "premium"
+  isAuthenticated: boolean
+  loginTime: string
+}
+
 export default function MentoriaPage() {
+  const [userData, setUserData] = useState<UserData | null>(null)
   const [selectedMentor, setSelectedMentor] = useState<Mentor | null>(null)
   const [selectedAIMentor, setSelectedAIMentor] = useState<AIMentor | null>(null)
   const [chatMessages, setChatMessages] = useState<Array<{ sender: "user" | "mentor"; message: string; time: string }>>(
     [],
   )
   const [newMessage, setNewMessage] = useState("")
+
+  useEffect(() => {
+    const storedUserData = localStorage.getItem('userData')
+    if (storedUserData) {
+      try {
+        const user = JSON.parse(storedUserData)
+        if (user.isAuthenticated) {
+          setUserData(user)
+          console.log('User data loaded:', user) // Debug temporário
+        }
+      } catch (error) {
+        console.error('Erro ao carregar dados do usuário:', error)
+      }
+    } else {
+      console.log('No user data found') // Debug temporário
+    }
+  }, [])
 
   const handleSendMessage = () => {
     if (!newMessage.trim() || (!selectedMentor && !selectedAIMentor)) return
@@ -433,11 +462,66 @@ export default function MentoriaPage() {
 
       <section className="px-4 pb-16">
         <div className="container mx-auto max-w-6xl">
-          <Tabs defaultValue="human" className="w-full">
+          <Tabs defaultValue={userData?.signature === "free" ? "ai" : "human"} className="w-full">
+          {(!userData || userData?.signature === "free") && (
+                <Card className="mb-8 border-2 border-purple-200 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20">
+                  <CardHeader>
+                    <div className="flex items-center space-x-3">
+                      <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-full">
+                        <Crown className="w-6 h-6 text-purple-600" />
+                      </div>
+                      <div>
+                        <CardTitle className="text-xl text-purple-800 dark:text-purple-200">
+                          🚀 Desbloqueie Mentores Especialistas!
+                        </CardTitle>
+                        <CardDescription className="text-purple-600 dark:text-purple-300">
+                          Dê um upgrade no seu plano e tenha acesso a 5 mentorias especializadas mensais gratuitas
+                        </CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid md:grid-cols-3 gap-4">
+                      <div className="flex items-center space-x-2">
+                        <TrendingUp className="w-5 h-5 text-green-600" />
+                        <span className="text-sm font-medium">5 sessões mensais gratuitas</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <MessageCircle className="w-5 h-5 text-blue-600" />
+                        <span className="text-sm font-medium">Mentores experientes</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Calendar className="w-5 h-5 text-purple-600" />
+                        <span className="text-sm font-medium">Agendamento flexível</span>
+                      </div>
+                    </div>
+                    <div className="bg-white/50 dark:bg-gray-800/50 p-4 rounded-lg">
+                      <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
+                        <strong>Benefícios Premium:</strong> Acesso completo a mentores especialistas, sessões personalizadas, 
+                        networking profissional e trilhas de carreira personalizadas com IA.
+                      </p>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <span className="text-xs text-gray-500 line-through">R$ 39/mês</span>
+                          <span className="text-lg font-bold text-green-600 ml-2">R$ 29/mês*</span>
+                          <Badge className="ml-2 bg-red-100 text-red-800">30% OFF</Badge>
+                        </div>
+                        <Button className="bg-purple-600 hover:bg-purple-700">
+                          <Crown className="w-4 h-4 mr-2" />
+                          Fazer Upgrade
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
             <TabsList className="grid w-full grid-cols-2 mb-8">
-              <TabsTrigger value="human" className="flex items-center gap-2">
+              <TabsTrigger 
+                value="human" 
+                className="flex items-center gap-2"
+              >
                 <MessageCircle className="w-4 h-4" />
-                Mentores Humanos
+                Mentores Especializados
               </TabsTrigger>
               <TabsTrigger value="ai" className="flex items-center gap-2">
                 <Bot className="w-4 h-4" />
@@ -448,7 +532,7 @@ export default function MentoriaPage() {
             <TabsContent value="human">
               <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-6">
                 {mentorsData.map((mentor) => (
-                  <Card key={mentor.id} className="group hover:shadow-lg transition-all duration-300 border-0 bg-card">
+                  <Card key={mentor.id} className={`group hover:shadow-lg transition-all duration-300 border-0 bg-card relative`}>
                     <CardHeader>
                       <div className="flex items-start gap-4">
                         <Avatar className="w-16 h-16">
@@ -530,11 +614,14 @@ export default function MentoriaPage() {
                           className="flex-1"
                           onClick={() => setSelectedMentor(mentor)}
                           disabled={!mentor.available}
-                        >
+                        >                         
                           <MessageCircle className="w-4 h-4 mr-2" />
-                          {mentor.available ? "Iniciar Chat" : "Indisponível"}
+                          {mentor.available ? "Iniciar chat" : "Indisponível"}                        
                         </Button>
-                        <Button variant="outline" size="sm">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                        >
                           Ver Perfil
                         </Button>
                       </div>

@@ -18,11 +18,19 @@ import {
   Calendar,
   ArrowRight,
   Trophy,
-  Lightbulb
+  Lightbulb,
+  Search,
+  Sparkles,
+  Crown,
+  Filter,
+  Send
 } from "lucide-react"
 import Link from "next/link"
 import { trilhasData } from "@/lib/data"
 import AuthGuard from "@/components/auth-guard"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
 
 interface UserData {
   id: string
@@ -43,6 +51,15 @@ interface Mentoria {
 
 export default function DashboardPage() {
   const [userData, setUserData] = useState<UserData | null>(null)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [isGenerating, setIsGenerating] = useState(false)
+  const [aiFormData, setAiFormData] = useState({
+    interests: "",
+    experience: "",
+    goals: "",
+    timeCommitment: ""
+  })
+  const [generatedTrilha, setGeneratedTrilha] = useState<any>(null)
   const router = useRouter()
 
   useEffect(() => {
@@ -127,7 +144,74 @@ export default function DashboardPage() {
     }
   ]
 
+  // Trilhas disponíveis para busca (simulando algumas gratuitas)
+  const availableTrilhas = Object.values(trilhasData).map(trilha => ({
+    ...trilha,
+    free: Math.random() > 0.5 // Simulando algumas trilhas gratuitas
+  }))
 
+  const getFilteredTrilhas = () => {
+    const filtered = availableTrilhas.filter(trilha => {
+      const matchesSearch = trilha.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                           trilha.description.toLowerCase().includes(searchQuery.toLowerCase())
+      
+      if (userData?.signature === "premium") {
+        return matchesSearch 
+      } else {
+        return matchesSearch && trilha.free
+      }
+    })
+
+    return filtered.slice(0, 6)
+  }
+
+  const handleGenerateCustomTrilha = async () => {
+    if (!aiFormData.interests || !aiFormData.goals) return
+
+    setIsGenerating(true)
+
+    setTimeout(() => {
+      const generatedTrilha = {
+        id: "ai-generated-" + Date.now(),
+        title: `Trilha Personalizada: ${aiFormData.interests}`,
+        description: `Trilha customizada baseada em ${aiFormData.interests} para alcançar ${aiFormData.goals}`,
+        image: "/ai-robot-coding.png",
+        level: aiFormData.experience || "Iniciante",
+        duration: aiFormData.timeCommitment || "6 meses",
+        modules: [
+          {
+            id: "1",
+            title: "Fundamentos",
+            description: `Conceitos básicos de ${aiFormData.interests}`,
+            contents: [],
+            completed: false
+          },
+          {
+            id: "2", 
+            title: "Prática Intermediária",
+            description: `Aplicação prática de ${aiFormData.interests}`,
+            contents: [],
+            completed: false
+          },
+          {
+            id: "3",
+            title: "Projeto Final",
+            description: `Desenvolvendo projeto para ${aiFormData.goals}`,
+            contents: [],
+            completed: false
+          }
+        ],
+        skills: aiFormData.interests.split(",").map(s => s.trim()),
+        salary: "R$ 4.000 - R$ 10.000",
+        rating: 4.8,
+        students: "100+",
+        free: false
+      }
+
+      setGeneratedTrilha(generatedTrilha)
+      setIsGenerating(false)
+    }, 3000)
+  }
 
   return (
     <AuthGuard>
@@ -306,6 +390,212 @@ export default function DashboardPage() {
           </div>
         </div>
 
+        <div className="mt-8">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Search className="w-5 h-5" />
+                <span>Buscar Nova Trilha</span>
+              </CardTitle>
+              <CardDescription>
+                Encontre a trilha perfeita para seus objetivos
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {/* Barra de Pesquisa */}
+              <div className="mb-6">
+                <div className="relative">
+                  <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Buscar por área, tecnologia ou cargo..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+
+              {/* Geração Personalizada para Premium */}
+              {userData?.signature === "premium" && (
+                <div className="mb-8 p-6 border rounded-lg bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20">
+                  <div className="flex items-center space-x-2 mb-4">
+                    <Crown className="w-5 h-5 text-purple-600" />
+                    <h3 className="text-lg font-semibold">Trilha Personalizada com IA</h3>
+                    <Badge variant="default" className="bg-purple-600">Premium</Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Gere uma trilha totalmente personalizada com base nos seus objetivos e experiência
+                  </p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <Label htmlFor="interests">Áreas de Interesse</Label>
+                      <Input
+                        id="interests"
+                        placeholder="Ex: React, Python, UX Design..."
+                        value={aiFormData.interests}
+                        onChange={(e) => setAiFormData({...aiFormData, interests: e.target.value})}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="experience">Nível de Experiência</Label>
+                      <Input
+                        id="experience"
+                        placeholder="Ex: Iniciante, Intermediário, Avançado"
+                        value={aiFormData.experience}
+                        onChange={(e) => setAiFormData({...aiFormData, experience: e.target.value})}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="goals">Objetivos Profissionais</Label>
+                      <Input
+                        id="goals"
+                        placeholder="Ex: Conseguir primeiro emprego, mudar de área..."
+                        value={aiFormData.goals}
+                        onChange={(e) => setAiFormData({...aiFormData, goals: e.target.value})}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="timeCommitment">Tempo Disponível</Label>
+                      <Input
+                        id="timeCommitment"
+                        placeholder="Ex: 2 horas/dia, fins de semana..."
+                        value={aiFormData.timeCommitment}
+                        onChange={(e) => setAiFormData({...aiFormData, timeCommitment: e.target.value})}
+                      />
+                    </div>
+                  </div>
+
+                  <Button 
+                    onClick={handleGenerateCustomTrilha}
+                    disabled={isGenerating || !aiFormData.interests || !aiFormData.goals}
+                    className="w-full md:w-auto"
+                  >
+                    {isGenerating ? (
+                      <>
+                        <Sparkles className="w-4 h-4 mr-2 animate-spin" />
+                        Gerando trilha personalizada...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-4 h-4 mr-2" />
+                        Gerar Trilha Personalizada
+                      </>
+                    )}
+                  </Button>
+
+                  {/* Trilha Gerada */}
+                  {generatedTrilha && (
+                    <div className="mt-6 p-4 border rounded-lg bg-white dark:bg-gray-800">
+                      <div className="flex items-start space-x-4">
+                        <div className="w-16 h-16 bg-gradient-to-br from-purple-400 to-blue-600 rounded-lg flex items-center justify-center">
+                          <Sparkles className="w-8 h-8 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="font-semibold text-lg">{generatedTrilha.title}</h4>
+                          <p className="text-sm text-muted-foreground mb-2">
+                            {generatedTrilha.description}
+                          </p>
+                          <div className="flex items-center space-x-4 text-xs text-muted-foreground mb-3">
+                            <span className="flex items-center">
+                              <Clock className="w-3 h-3 mr-1" />
+                              {generatedTrilha.duration}
+                            </span>
+                            <span className="flex items-center">
+                              <Users className="w-3 h-3 mr-1" />
+                              {generatedTrilha.students}
+                            </span>
+                            <span className="flex items-center">
+                              <Star className="w-3 h-3 mr-1" />
+                              {generatedTrilha.rating}
+                            </span>
+                          </div>
+                          <p className="text-sm font-medium text-green-600 mb-3">
+                            {generatedTrilha.salary}
+                          </p>
+                          <Button size="sm">
+                            <Play className="w-4 h-4 mr-1" />
+                            Iniciar Trilha
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Lista de Trilhas Disponíveis */}
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold">
+                    Todas as Trilhas
+                  </h3>
+                  <div className="flex items-center space-x-2">
+                    <Filter className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-sm text-muted-foreground">
+                      {userData?.signature === "free" && "Upgrade para Premium para gerar trilhas personalizadas"}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {getFilteredTrilhas().map((trilha) => (
+                    <div key={trilha.id} className="border rounded-lg p-4 hover:bg-muted/50 transition-colors">
+                      <div className="flex items-center space-x-3 mb-3">
+                        <div className="w-12 h-12 bg-muted rounded-lg flex items-center justify-center">
+                          <img 
+                            src={trilha.image} 
+                            alt={trilha.title}
+                            className="w-8 h-8 object-cover rounded"
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="font-semibold text-sm">{trilha.title}</h4>
+                          <div className="flex items-center space-x-2 mt-1">
+                            <Badge variant={trilha.free ? "secondary" : "default"} className="text-xs">
+                              {trilha.free ? "Gratuita" : "Premium"}
+                            </Badge>
+                            <span className="text-xs text-muted-foreground">{trilha.level}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <p className="text-xs text-muted-foreground mb-3 line-clamp-2">
+                        {trilha.description}
+                      </p>
+                      <div className="flex items-center justify-between text-xs text-muted-foreground mb-3">
+                        <span className="flex items-center">
+                          <Clock className="w-3 h-3 mr-1" />
+                          {trilha.duration}
+                        </span>
+                        <span className="flex items-center">
+                          <Star className="w-3 h-3 mr-1" />
+                          {trilha.rating}
+                        </span>
+                      </div>
+                      <Button size="sm" variant="outline" className="w-full" asChild>
+                        <Link href={`/trilhas/${trilha.id}`}>
+                          <ArrowRight className="w-4 h-4 mr-1" />
+                          Ver Trilha
+                        </Link>
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+
+                {getFilteredTrilhas().length === 0 && (
+                  <div className="text-center py-8">
+                    <Search className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold mb-2">Nenhuma trilha encontrada</h3>
+                    <p className="text-muted-foreground">
+                      Tente ajustar sua pesquisa ou {userData?.signature === "free" && "considere fazer upgrade para Premium"}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
         {/* Sugestões de Próximas Trilhas */}
         <div className="mt-8">
           <Card>
@@ -359,7 +649,7 @@ export default function DashboardPage() {
               </div>
             </CardContent>
           </Card>
-        </div>
+        </div>      
       </div>
       </div>
     </AuthGuard>
