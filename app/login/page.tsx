@@ -45,6 +45,9 @@ export default function LoginPage() {
       
       localStorage.setItem('userData', JSON.stringify(userData))
       
+      // Disparar evento para atualizar o header
+      window.dispatchEvent(new Event('userDataChanged'))
+      
       setIsLoading(false)
       toast({
         variant: "success",
@@ -54,7 +57,7 @@ export default function LoginPage() {
       
       console.log("Login realizado com sucesso!", userData)
       
-      router.push('/')
+      router.push('/dashboard')
     }, 2000)
   }
 
