@@ -7,20 +7,37 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Eye, EyeOff, Mail, Lock, ArrowLeft } from "lucide-react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { v4 as uuidv4 } from 'uuid';
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     
-    // Simular processo de login
     setTimeout(() => {
+      const fakeUUID = uuidv4()
+      
+      const userData = {
+        id: fakeUUID,
+        email: email,
+        isAuthenticated: true,
+        loginTime: new Date().toISOString()
+      }
+      
+      localStorage.setItem('userData', JSON.stringify(userData))
+      
       setIsLoading(false)
-      // Aqui você implementaria a lógica real de autenticação
-      console.log("Login realizado")
+      console.log("Login realizado com sucesso!", userData)
+      
+      // Redirecionar para a página principal
+      router.push('/')
     }, 2000)
   }
 
@@ -53,6 +70,8 @@ export default function LoginPage() {
                     type="email"
                     placeholder="seu@email.com"
                     className="pl-10"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
                   />
                 </div>
@@ -67,6 +86,8 @@ export default function LoginPage() {
                     type={showPassword ? "text" : "password"}
                     placeholder="Digite sua senha"
                     className="pl-10 pr-10"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     required
                   />
                   <button
