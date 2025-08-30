@@ -838,3 +838,30 @@ export const jobMarketData = {
   growthRate: "+23%",
   remoteJobs: "78%",
 }
+
+export interface User {
+  id: string
+  name: string
+  email: string
+  password: string
+  signature: "free" | "premium"
+}
+
+export const usersData: User[] = [
+  {
+    id: "d660119e-86e3-40a0-9682-0775b544b1af",
+    name: "Lucas",
+    email: "lucas@gmail.com",
+    password: "1234",
+    signature: "free"
+  },
+  {
+    id: "d660119e-86e3-40a0-9682-0775b544b1af",
+    name: "Ana",
+    email: "ana@gmail.com",
+    password: "1234",
+    signature: "premium"
+  },
+]
+
+

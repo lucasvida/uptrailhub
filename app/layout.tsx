@@ -4,6 +4,7 @@ import { DM_Sans } from "next/font/google"
 import "./globals.css"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
+import { Toaster } from "@/components/ui/toaster"
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -28,6 +29,7 @@ export default function RootLayout({
         <Header />
         {children}
         <Footer />
+        <Toaster />
       </body>
     </html>
   )

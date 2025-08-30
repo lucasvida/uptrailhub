@@ -8,7 +8,8 @@ import { Label } from "@/components/ui/label"
 import { Eye, EyeOff, Mail, Lock, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { v4 as uuidv4 } from 'uuid';
+import { usersData } from "@/lib/data"
+import { useToast } from "@/hooks/use-toast"
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
@@ -16,17 +17,28 @@ export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const router = useRouter()
+  const { toast } = useToast()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     
     setTimeout(() => {
-      const fakeUUID = uuidv4()
-      
+      const user = usersData.find(x => x.email == email && x.password == password)
+      if (user == null) {
+        setIsLoading(false)
+        toast({
+          variant: "destructive",
+          title: "Erro no login",
+          description: "Usuário não encontrado. Verifique seu email e senha.",
+        })
+        return
+      }
+
       const userData = {
-        id: fakeUUID,
+        id: user.id,
         email: email,
+        signature: user.signature,
         isAuthenticated: true,
         loginTime: new Date().toISOString()
       }
@@ -34,9 +46,14 @@ export default function LoginPage() {
       localStorage.setItem('userData', JSON.stringify(userData))
       
       setIsLoading(false)
+      toast({
+        variant: "success",
+        title: "Login realizado com sucesso!",
+        description: "Bem-vindo de volta!",
+      })
+      
       console.log("Login realizado com sucesso!", userData)
       
-      // Redirecionar para a página principal
       router.push('/')
     }, 2000)
   }
@@ -134,7 +151,6 @@ export default function LoginPage() {
               </p>
             </div>
 
-            {/* Social Login */}
             <div className="mt-6">
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
