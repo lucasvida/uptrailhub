@@ -25,7 +25,7 @@ export default function TrilhasPage() {
       title: "Desenvolvedor Back-end",
       description: "Construa APIs robustas com Node.js, Python e bancos de dados modernos.",
       longDescription: "Torne-se um desenvolvedor back-end completo dominando tecnologias server-side.",
-      image: "/placeholder-l3tdo.png",
+      image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=600&fit=crop&crop=center",
       level: "Intermediário",
       duration: "7 meses",
       progress: 0,
@@ -63,7 +63,7 @@ export default function TrilhasPage() {
       title: "Engenheiro DevOps",
       description: "Automatize deploys e gerencie infraestrutura com Docker, Kubernetes e AWS.",
       longDescription: "Domine DevOps e cloud computing para automatizar processos de desenvolvimento.",
-      image: "/placeholder-l3tdo.png",
+      image: "https://images.unsplash.com/photo-1667372393119-3d4c48d07fc9?w=800&h=600&fit=crop&crop=center",
       level: "Avançado",
       duration: "10 meses",
       progress: 0,
@@ -101,7 +101,7 @@ export default function TrilhasPage() {
       title: "Gerente de Produto",
       description: "Lidere produtos digitais do conceito ao lançamento com metodologias ágeis.",
       longDescription: "Aprenda a gerenciar produtos digitais de forma estratégica e orientada a dados.",
-      image: "/placeholder-l3tdo.png",
+      image: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&h=600&fit=crop&crop=center",
       level: "Intermediário",
       duration: "6 meses",
       progress: 0,
@@ -147,9 +147,9 @@ export default function TrilhasPage() {
 
     if (demandLevel === "alta" && hasUrgentJobs) {
       return (
-        <div className="absolute top-2 right-2 flex items-center gap-1 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-medium">
+        <div className="absolute top-2 right-2 flex items-center gap-1 bg-yellow-500 text-white px-2 py-1 rounded-full text-xs font-medium">
           <Zap className="w-3 h-3" />
-          Urgente
+          Alta Demanda
         </div>
       )
     } else if (demandLevel === "alta") {
@@ -165,36 +165,6 @@ export default function TrilhasPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm" asChild>
-              <a href="/" className="flex items-center">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Voltar
-              </a>
-            </Button>
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <BookOpen className="w-5 h-5 text-primary-foreground" />
-              </div>
-              <span className="text-xl font-bold text-foreground">EduHub</span>
-            </div>
-          </div>
-          <nav className="hidden md:flex items-center space-x-8">
-            <a href="/trilhas" className="text-primary font-medium">
-              Trilhas
-            </a>
-            <a href="/mentoria" className="text-foreground hover:text-primary transition-colors font-medium">
-              Mentoria
-            </a>
-            <a href="/#comunidade" className="text-foreground hover:text-primary transition-colors font-medium">
-              Comunidade
-            </a>
-          </nav>
-        </div>
-      </header>
 
       {/* Hero Section */}
       <section className="py-16 px-4">
@@ -250,11 +220,11 @@ export default function TrilhasPage() {
                 {getDemandIndicator(trilha)}
                 <a href={`/trilhas/${trilha.id}`} className="block">
                   <CardHeader className="pb-4">
-                    <div className="w-full h-48 bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg mb-4 flex items-center justify-center">
+                    <div className="w-full h-48 bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg mb-4 overflow-hidden">
                       <img
                         src={trilha.image || "/placeholder.svg"}
                         alt={trilha.title}
-                        className="w-24 h-24 object-cover rounded-lg"
+                        className="w-full h-full object-cover"
                       />
                     </div>
                     <div className="flex items-center justify-between mb-2">

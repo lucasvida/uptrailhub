@@ -101,10 +101,6 @@ export function MarketIntelligenceCard({ marketIntelligence }: MarketIntelligenc
                     <h4 className="font-semibold">{opportunity.position}</h4>
                     <p className="text-sm text-muted-foreground">{opportunity.company}</p>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <div className={`w-2 h-2 rounded-full ${getUrgencyColor(opportunity.urgency)}`} />
-                    <span className="text-xs text-muted-foreground">Urgência {opportunity.urgency}</span>
-                  </div>
                 </div>
 
                 <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">

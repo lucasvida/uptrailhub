@@ -130,30 +130,6 @@ export default function MentoriaPage() {
 
     return (
       <div className="min-h-screen bg-background">
-        {/* Header */}
-        <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
-          <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  setSelectedMentor(null)
-                  setSelectedAIMentor(null)
-                }}
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Voltar aos Mentores
-              </Button>
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                  <BookOpen className="w-5 h-5 text-primary-foreground" />
-                </div>
-                <span className="text-xl font-bold text-foreground">EduHub</span>
-              </div>
-            </div>
-          </div>
-        </header>
 
         {/* Chat Interface */}
         <div className="container mx-auto px-4 py-6 max-w-4xl">
@@ -163,12 +139,12 @@ export default function MentoriaPage() {
               <Card className="bg-card border-0 h-full">
                 <CardHeader className="text-center">
                   <Avatar className="w-20 h-20 mx-auto mb-4">
-                    <AvatarImage src={currentMentor.avatar || "/placeholder.svg"} alt={currentMentor.name} />
+                    <AvatarImage src={currentMentor?.avatar || "/placeholder.svg"} alt={currentMentor?.name} />
                     <AvatarFallback>
                       {isAI ? (
                         <Bot className="w-8 h-8" />
                       ) : (
-                        currentMentor.name
+                        currentMentor?.name
                           .split(" ")
                           .map((n) => n[0])
                           .join("")
@@ -176,7 +152,7 @@ export default function MentoriaPage() {
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex items-center justify-center gap-2 mb-2">
-                    <CardTitle className="text-lg">{currentMentor.name}</CardTitle>
+                    <CardTitle className="text-lg">{currentMentor?.name}</CardTitle>
                     {isAI && <Bot className="w-5 h-5 text-primary" />}
                   </div>
                   <CardDescription>{isAI ? selectedAIMentor!.description : selectedMentor!.title}</CardDescription>
@@ -248,7 +224,7 @@ export default function MentoriaPage() {
                   <div>
                     <h4 className="font-semibold text-sm mb-2">Especialidades</h4>
                     <div className="flex flex-wrap gap-1">
-                      {currentMentor.specialties.map((specialty) => (
+                      {currentMentor?.specialties.map((specialty) => (
                         <Badge key={specialty} variant="outline" className="text-xs">
                           {specialty}
                         </Badge>
@@ -290,7 +266,7 @@ export default function MentoriaPage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <CardTitle className="text-lg flex items-center gap-2">
-                        Chat com {currentMentor.name}
+                        Chat com {currentMentor?.name}
                         {isAI && <Bot className="w-5 h-5 text-primary" />}
                       </CardTitle>
                       <CardDescription>
@@ -321,7 +297,7 @@ export default function MentoriaPage() {
                       ) : (
                         <MessageCircle className="w-12 h-12 mx-auto mb-4 opacity-50" />
                       )}
-                      <p>Inicie uma conversa com {currentMentor.name}</p>
+                      <p>Inicie uma conversa com {currentMentor?.name}</p>
                       <p className="text-sm">
                         {isAI
                           ? "Faça qualquer pergunta - estou aqui para te ajudar 24/7!"
@@ -401,36 +377,6 @@ export default function MentoriaPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm" asChild>
-              <a href="/" className="flex items-center">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Voltar
-              </a>
-            </Button>
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <BookOpen className="w-5 h-5 text-primary-foreground" />
-              </div>
-              <span className="text-xl font-bold text-foreground">EduHub</span>
-            </div>
-          </div>
-          <nav className="hidden md:flex items-center space-x-8">
-            <a href="/trilhas" className="text-foreground hover:text-primary transition-colors font-medium">
-              Trilhas
-            </a>
-            <a href="/mentoria" className="text-primary font-medium">
-              Mentoria
-            </a>
-            <a href="/#comunidade" className="text-foreground hover:text-primary transition-colors font-medium">
-              Comunidade
-            </a>
-          </nav>
-        </div>
-      </header>
 
       {/* Hero Section */}
       <section className="py-16 px-4">
