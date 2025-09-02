@@ -269,15 +269,6 @@ export default function TrilhasPage() {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
-                      {trilha.progress > 0 && (
-                        <>
-                          <div className="flex items-center justify-between text-sm">
-                            <span className="text-muted-foreground">Progresso</span>
-                            <span className="font-medium text-primary">{trilha.progress}%</span>
-                          </div>
-                          <Progress value={trilha.progress} className="h-2" />
-                        </>
-                      )}
                       <div className="flex items-center justify-between pt-2">
                         <div className="flex items-center text-sm text-muted-foreground">
                           <Users className="w-4 h-4 mr-1" />

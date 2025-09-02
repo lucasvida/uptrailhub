@@ -30,7 +30,6 @@ export default function Header() {
       }
     }
 
-    // Verificar dados iniciais
     checkUserData()
 
     // Listener para mudanças no localStorage (outras abas)
@@ -107,7 +106,7 @@ export default function Header() {
              Trilhas
            </Link>
            <Link href="/mentoria" className="text-white hover:text-green-200 transition-colors font-medium">
-             Mentoria
+             Mentorias
            </Link>
            {userData ? (
              <>
@@ -115,7 +114,7 @@ export default function Header() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-white hover:text-green-200 hover:bg-white/10 p-2"
+                  className="cursor-pointer text-white hover:text-green-200 hover:bg-white/10 p-2"
                   onClick={() => setShowUserMenu(!showUserMenu)}
                 >
                   <User className="w-5 h-5" />
@@ -147,7 +146,7 @@ export default function Header() {
           ) : (
             <Link href="/login" className="text-white hover:text-green-200 transition-colors font-medium flex items-center space-x-1">
               <User className="w-4 h-4" />
-              <span>Login</span>
+              <span>Acessar Hub</span>
             </Link>
           )}
         </nav>

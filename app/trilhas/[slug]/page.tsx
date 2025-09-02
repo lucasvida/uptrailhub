@@ -104,19 +104,6 @@ export default function TrilhaPage({ params }: { params: { slug: string } }) {
                   <div className="text-sm text-muted-foreground">Crescimento</div>
                 </div>
               </div>
-
-              <div className="flex items-center gap-4 mb-6">
-                <Button size="lg" className="flex items-center gap-2">
-                  <Play className="w-5 h-5" />
-                  Continuar Aprendizado
-                </Button>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <span>Progresso:</span>
-                  <span className="font-medium text-primary">{trilha.progress}%</span>
-                </div>
-              </div>
-
-              <Progress value={trilha.progress} className="h-3 mb-8" />
             </div>
 
             <div className="lg:col-span-1">

@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
 import { 
   BookOpen, 
   MessageCircle, 
@@ -74,7 +73,6 @@ export default function DashboardPage() {
     }
   }, [])
 
-  // Dados simulados de mentorias recentes
   const recentMentorias: Mentoria[] = [
     {
       id: "1",
@@ -102,7 +100,6 @@ export default function DashboardPage() {
     }
   ]
 
-  // Trilhas em andamento (simuladas)
   const trilhasEmAndamento = [
     {
       id: "frontend-developer",
@@ -122,7 +119,6 @@ export default function DashboardPage() {
     }
   ]
 
-  // Sugestões de próximas trilhas
   const sugestoesTrilhas = [
     {
       id: "ux-ui-designer",
@@ -144,10 +140,9 @@ export default function DashboardPage() {
     }
   ]
 
-  // Trilhas disponíveis para busca (simulando algumas gratuitas)
   const availableTrilhas = Object.values(trilhasData).map(trilha => ({
     ...trilha,
-    free: Math.random() > 0.5 // Simulando algumas trilhas gratuitas
+    free: Math.random() > 0.5
   }))
 
   const getFilteredTrilhas = () => {
@@ -326,11 +321,6 @@ export default function DashboardPage() {
                         Próximo módulo: {trilha.nextModule}
                       </p>
                       <div className="space-y-2">
-                        <div className="flex items-center justify-between text-sm">
-                          <span>Progresso</span>
-                          <span className="font-medium">{trilha.progress}%</span>
-                        </div>
-                        <Progress value={trilha.progress} className="h-2" />
                         <p className="text-xs text-muted-foreground">
                           Última atividade: {trilha.lastActivity}
                         </p>
@@ -532,9 +522,6 @@ export default function DashboardPage() {
                   </h3>
                   <div className="flex items-center space-x-2">
                     <Filter className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">
-                      {userData?.signature === "free" && "Upgrade para Premium para gerar trilhas personalizadas"}
-                    </span>
                   </div>
                 </div>
 
@@ -587,7 +574,7 @@ export default function DashboardPage() {
                     <Search className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                     <h3 className="text-lg font-semibold mb-2">Nenhuma trilha encontrada</h3>
                     <p className="text-muted-foreground">
-                      Tente ajustar sua pesquisa ou {userData?.signature === "free" && "considere fazer upgrade para Premium"}
+                      Tente ajustar sua pesquisa
                     </p>
                   </div>
                 )}

@@ -10,9 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
-  BookOpen,
   Star,
-  ArrowLeft,
   MessageCircle,
   Search,
   Filter,
@@ -30,10 +28,10 @@ import {
   Brain,
   Sparkles,
   Crown,
-  Lock,
   TrendingUp,
 } from "lucide-react"
 import { mentorsData, type Mentor } from "@/lib/data"
+import { useRouter } from "next/navigation"
 
 type AIMentor = {
   id: string
@@ -87,6 +85,7 @@ export default function MentoriaPage() {
     [],
   )
   const [newMessage, setNewMessage] = useState("")
+  const router = useRouter();
 
   useEffect(() => {
     const storedUserData = localStorage.getItem('userData')
@@ -95,15 +94,23 @@ export default function MentoriaPage() {
         const user = JSON.parse(storedUserData)
         if (user.isAuthenticated) {
           setUserData(user)
-          console.log('User data loaded:', user) // Debug temporário
         }
       } catch (error) {
         console.error('Erro ao carregar dados do usuário:', error)
       }
     } else {
-      console.log('No user data found') // Debug temporário
     }
   }, [])
+
+  useEffect(() => {
+    if ((selectedMentor || selectedAIMentor) && !userData) {
+      const timer = setTimeout(() => {
+        router.push("/login");
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [selectedMentor, selectedAIMentor, userData, router]);
 
   const handleSendMessage = () => {
     if (!newMessage.trim() || (!selectedMentor && !selectedAIMentor)) return
@@ -148,12 +155,12 @@ export default function MentoriaPage() {
         ])
       },
       selectedAIMentor ? 1000 : 2000,
-    ) // AI responds faster
+    )
 
     setNewMessage("")
   }
 
-  if (selectedMentor || selectedAIMentor) {
+  if (userData && (selectedMentor || selectedAIMentor)) { 
     const currentMentor = selectedMentor || selectedAIMentor
     const isAI = !!selectedAIMentor
 
@@ -420,17 +427,12 @@ export default function MentoriaPage() {
         </div>
       </section>
 
-      {/* Stats Section */}
       <section className="px-4 mb-12">
         <div className="container mx-auto max-w-4xl">
-          <div className="grid md:grid-cols-4 gap-6 text-center">
+          <div className="grid md:grid-cols-3 gap-6 text-center">
             <div className="bg-muted/30 rounded-lg p-6">
               <div className="text-3xl font-bold text-primary mb-2">500+</div>
               <div className="text-muted-foreground">Mentores Ativos</div>
-            </div>
-            <div className="bg-muted/30 rounded-lg p-6">
-              <div className="text-3xl font-bold text-primary mb-2">85%</div>
-              <div className="text-muted-foreground">Taxa de Sucesso</div>
             </div>
             <div className="bg-muted/30 rounded-lg p-6">
               <div className="text-3xl font-bold text-primary mb-2">4.8★</div>
@@ -444,7 +446,6 @@ export default function MentoriaPage() {
         </div>
       </section>
 
-      {/* Search and Filter */}
       <section className="px-4 mb-8">
         <div className="container mx-auto max-w-4xl">
           <div className="flex flex-col md:flex-row gap-4 items-center">
@@ -463,7 +464,7 @@ export default function MentoriaPage() {
       <section className="px-4 pb-16">
         <div className="container mx-auto max-w-6xl">
           <Tabs defaultValue={userData?.signature === "free" ? "ai" : "human"} className="w-full">
-          {(!userData || userData?.signature === "free") && (
+          {(userData && userData.signature === "free") && (
                 <Card className="mb-8 border-2 border-purple-200 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20">
                   <CardHeader>
                     <div className="flex items-center space-x-3">
@@ -518,12 +519,12 @@ export default function MentoriaPage() {
             <TabsList className="grid w-full grid-cols-2 mb-8">
               <TabsTrigger 
                 value="human" 
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 cursor-pointer"
               >
                 <MessageCircle className="w-4 h-4" />
                 Mentores Especializados
               </TabsTrigger>
-              <TabsTrigger value="ai" className="flex items-center gap-2">
+              <TabsTrigger value="ai" className="flex items-center gap-2 cursor-pointer">
                 <Bot className="w-4 h-4" />
                 Mentoria com IA
               </TabsTrigger>
@@ -611,7 +612,7 @@ export default function MentoriaPage() {
 
                       <div className="flex gap-2 pt-2">
                         <Button
-                          className="flex-1"
+                          className="flex-1 cursor-pointer"
                           onClick={() => setSelectedMentor(mentor)}
                           disabled={!mentor.available}
                         >                         
@@ -619,6 +620,7 @@ export default function MentoriaPage() {
                           {mentor.available ? "Iniciar chat" : "Indisponível"}                        
                         </Button>
                         <Button 
+                          className="cursor-pointer"
                           variant="outline" 
                           size="sm"
                         >

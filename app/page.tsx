@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
 import { Users, MessageCircle, Star, Clock, TrendingUp, Check, Crown, Zap, Target, AlertTriangle, BarChart3, Brain } from "lucide-react"
 import React from "react"
@@ -37,7 +36,7 @@ export default function LearningHub() {
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
           <Button size="lg" className="text-lg px-8 py-6 rounded-xl">
             <Target className="w-5 h-5 mr-2" />
-            <a href="/trilhas">Comece seu treinamento agora</a>
+            <a href="/login">Comece seu treinamento agora</a>
           </Button>
           <Button size="lg" variant="outline" className="text-lg px-8 py-6 rounded-xl bg-transparent">
             <MessageCircle className="w-5 h-5 mr-2" />
@@ -257,12 +256,7 @@ export default function LearningHub() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Progresso</span>
-                      <span className="font-medium text-primary">65%</span>
-                    </div>
-                    <Progress value={65} className="h-2" />
+                  <div className="space-y-3">                  
                     <div className="flex items-center justify-between pt-2">
                       <div className="flex items-center text-sm text-muted-foreground">
                         <Users className="w-4 h-4 mr-1" />
@@ -305,11 +299,6 @@ export default function LearningHub() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Progresso</span>
-                      <span className="font-medium text-accent">32%</span>
-                    </div>
-                    <Progress value={32} className="h-2" />
                     <div className="flex items-center justify-between pt-2">
                       <div className="flex items-center text-sm text-muted-foreground">
                         <Users className="w-4 h-4 mr-1" />
@@ -350,11 +339,6 @@ export default function LearningHub() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Progresso</span>
-                      <span className="font-medium text-primary">78%</span>
-                    </div>
-                    <Progress value={78} className="h-2" />
                     <div className="flex items-center justify-between pt-2">
                       <div className="flex items-center text-sm text-muted-foreground">
                         <Users className="w-4 h-4 mr-1" />
