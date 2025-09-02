@@ -1,6 +1,6 @@
 "use client"
 
-import { User, Target, Settings, LogOut } from "lucide-react"
+import { User, Target, Settings, LogOut, UserCircle } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
@@ -84,6 +84,11 @@ export default function Header() {
     router.push("/preferencias")
   }
 
+  const handleProfile = () => {
+    setShowUserMenu(false)
+    router.push("/perfil")
+  }
+
   const handleLoginRedirect = () => {
     console.log("[v0] Redirecting to login page")
     router.push("/login")
@@ -115,6 +120,14 @@ export default function Header() {
           <Link href="/mentoria" className="text-white hover:text-green-200 transition-colors font-medium">
             Mentorias
           </Link>
+          <Link href="/empresas" className="text-white hover:text-green-200 transition-colors font-medium">
+            Empresas
+          </Link>
+          {userData && (
+            <Link href="/perfil" className="text-white hover:text-green-200 transition-colors font-medium">
+              Perfil
+            </Link>
+          )}
           {userData ? (
             <>
               <div className="relative user-menu">
@@ -132,6 +145,13 @@ export default function Header() {
                       <p className="font-medium">{userData.email}</p>
                       <p className="text-xs text-gray-500">{userData.signature === "premium" ? "Premium" : "Free"}</p>
                     </div>
+                    <button
+                      onClick={handleProfile}
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
+                    >
+                      <UserCircle className="w-4 h-4" />
+                      <span>Meu Perfil</span>
+                    </button>
                     <button
                       onClick={handlePreferences}
                       className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2"

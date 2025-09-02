@@ -1,20 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
-import {
-  BookOpen,
-  Users,
-  Star,
-  Clock,
-  ArrowLeft,
-  Filter,
-  Search,
-  TrendingUp,
-  DollarSign,
-  Target,
-  Zap,
-} from "lucide-react"
+import { Users, Star, Clock, Filter, Search, TrendingUp, DollarSign, Target, Zap } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { trilhasData } from "@/lib/data"
 
@@ -165,7 +152,6 @@ export default function TrilhasPage() {
 
   return (
     <div className="min-h-screen bg-background">
-
       {/* Hero Section */}
       <section className="py-16 px-4">
         <div className="container mx-auto max-w-4xl text-center">

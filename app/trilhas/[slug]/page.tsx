@@ -10,12 +10,12 @@ import {
   Star,
   Clock,
   CheckCircle,
-  ExternalLink,
   Youtube,
   FileText,
   DollarSign,
   TrendingUp,
   ChevronDown,
+  Play,
 } from "lucide-react"
 import { trilhasData } from "@/lib/data"
 
@@ -101,6 +101,10 @@ export default async function TrilhaPage({ params }: { params: { slug: string } 
                   <div className="text-sm text-muted-foreground">Crescimento</div>
                 </div>
               </div>
+              <Button className="flex-1 cursor-pointer">
+                <Play className="w-4 h-4 mr-2" /> {/* Added play icon to button */}
+                Iniciar Trilha
+              </Button>
             </div>
 
             <div className="lg:col-span-1">
