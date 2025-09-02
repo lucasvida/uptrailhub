@@ -22,8 +22,9 @@ import {
 } from "lucide-react"
 import { trilhasData } from "@/lib/data"
 
-export default function TrilhaPage({ params }: { params: { slug: string } }) {
-  const trilha = trilhasData[params.slug]
+export default async function TrilhaPage({ params }: { params: { slug: string } }) {
+  const { slug } = await params; 
+  const trilha = trilhasData[slug];
 
   if (!trilha) {
     return (
