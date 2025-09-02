@@ -1,30 +1,27 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { MarketIntelligenceCard } from "@/components/market-intelligence-card"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import {
   BookOpen,
   Users,
   Star,
   Clock,
-  ArrowLeft,
-  Play,
   CheckCircle,
-  Lock,
   ExternalLink,
   Youtube,
   FileText,
   DollarSign,
   TrendingUp,
-  MapPin,
+  ChevronDown,
 } from "lucide-react"
 import { trilhasData } from "@/lib/data"
 
 export default async function TrilhaPage({ params }: { params: { slug: string } }) {
-  const { slug } = await params; 
-  const trilha = trilhasData[slug];
+  const { slug } = await params
+  const trilha = trilhasData[slug]
 
   if (!trilha) {
     return (
@@ -62,7 +59,6 @@ export default async function TrilhaPage({ params }: { params: { slug: string } 
 
   return (
     <div className="min-h-screen bg-background">
-
       {/* Hero Section */}
       <section className="py-12 px-4 bg-muted/30">
         <div className="container mx-auto max-w-6xl">
@@ -160,103 +156,91 @@ export default async function TrilhaPage({ params }: { params: { slug: string } 
         </div>
       </section>
 
+      <section className="py-12 px-4">
+        <div className="container mx-auto max-w-6xl">
+          <div className="mb-8">
+            <h2 className="text-3xl font-bold text-foreground mb-2">Módulos</h2>
+            <p className="text-muted-foreground">Veja o que você vai aprender nesta trilha</p>
+          </div>
+
+          <div className="space-y-4">
+            {trilha.modules.map((module, moduleIndex) => (
+              <Collapsible key={module.id}>
+                <Card className="bg-card border-0">
+                  <CollapsibleTrigger asChild>
+                    <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center">
+                            <span className="text-sm font-medium">{moduleIndex + 1}</span>
+                          </div>
+                          <div className="text-left">
+                            <CardTitle className="text-xl">{module.title}</CardTitle>
+                            <CardDescription>{module.description}</CardDescription>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline" className="text-xs">
+                            {module.contents.length} conteúdos
+                          </Badge>
+                          <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                        </div>
+                      </div>
+                    </CardHeader>
+                  </CollapsibleTrigger>
+
+                  <CollapsibleContent>
+                    <CardContent className="pt-0">
+                      <div className="space-y-3">
+                        {module.contents.map((content) => (
+                          <div
+                            key={content.id}
+                            className="flex items-center justify-between p-3 rounded-lg bg-muted/30 border border-muted"
+                          >
+                            <div className="flex items-center gap-3 flex-1">
+                              <div className="flex items-center gap-2 text-muted-foreground">
+                                {getContentIcon(content.type)}
+                                <span className={`text-sm font-medium ${getPlatformColor(content.platform)}`}>
+                                  {content.platform}
+                                </span>
+                              </div>
+
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2">
+                                  <h4 className="font-medium text-foreground">{content.title}</h4>
+                                  {!content.free && (
+                                    <Badge
+                                      variant="outline"
+                                      className="text-xs bg-yellow-50 text-yellow-700 border-yellow-200"
+                                    >
+                                      <DollarSign className="w-3 h-3 mr-1" />
+                                      Pago
+                                    </Badge>
+                                  )}
+                                </div>
+                                <p className="text-sm text-muted-foreground">{content.description}</p>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-3">
+                              <span className="text-sm text-muted-foreground">{content.duration}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </CollapsibleContent>
+                </Card>
+              </Collapsible>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="py-12 px-4 bg-muted/20">
         <div className="container mx-auto max-w-6xl">
           <h2 className="text-3xl font-bold text-foreground mb-8">Oportunidades de Mercado</h2>
           <MarketIntelligenceCard marketIntelligence={trilha.marketIntelligence} />
-        </div>
-      </section>
-
-      {/* Modules Section */}
-      <section className="py-12 px-4">
-        <div className="container mx-auto max-w-4xl">
-          <h2 className="text-3xl font-bold text-foreground mb-8">Conteúdo da Trilha</h2>
-
-          <div className="space-y-6">
-            {trilha.modules.map((module, moduleIndex) => (
-              <Card key={module.id} className="bg-card border-0">
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div
-                        className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                          module.completed ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-                        }`}
-                      >
-                        {module.completed ? (
-                          <CheckCircle className="w-4 h-4" />
-                        ) : (
-                          <span className="text-sm font-medium">{moduleIndex + 1}</span>
-                        )}
-                      </div>
-                      <div>
-                        <CardTitle className="text-xl">{module.title}</CardTitle>
-                        <CardDescription>{module.description}</CardDescription>
-                      </div>
-                    </div>
-                    <Badge variant={module.completed ? "default" : "secondary"}>
-                      {module.completed ? "Concluído" : "Em andamento"}
-                    </Badge>
-                  </div>
-                </CardHeader>
-
-                <CardContent>
-                  <div className="space-y-3">
-                    {module.contents.map((content) => (
-                      <div
-                        key={content.id}
-                        className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted/70 transition-colors"
-                      >
-                        <div className="flex items-center gap-3 flex-1">
-                          <div
-                            className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                              content.completed
-                                ? "bg-primary text-primary-foreground"
-                                : "bg-background border-2 border-muted-foreground"
-                            }`}
-                          >
-                            {content.completed ? <CheckCircle className="w-3 h-3" /> : <Lock className="w-3 h-3" />}
-                          </div>
-
-                          <div className="flex items-center gap-2 text-muted-foreground">
-                            {getContentIcon(content.type)}
-                            <span className={`text-sm font-medium ${getPlatformColor(content.platform)}`}>
-                              {content.platform}
-                            </span>
-                          </div>
-
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2">
-                              <h4 className="font-medium text-foreground">{content.title}</h4>
-                              {!content.free && (
-                                <Badge
-                                  variant="outline"
-                                  className="text-xs bg-yellow-50 text-yellow-700 border-yellow-200"
-                                >
-                                  <DollarSign className="w-3 h-3 mr-1" />
-                                  Pago
-                                </Badge>
-                              )}
-                            </div>
-                            <p className="text-sm text-muted-foreground">{content.description}</p>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-3">
-                          <span className="text-sm text-muted-foreground">{content.duration}</span>
-                          <Button size="sm" variant="ghost" asChild>
-                            <a href={content.url} target="_blank" rel="noopener noreferrer">
-                              <ExternalLink className="w-4 h-4" />
-                            </a>
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
         </div>
       </section>
     </div>

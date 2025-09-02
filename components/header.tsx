@@ -1,6 +1,6 @@
 "use client"
 
-import { Users, MessageCircle, Star, Clock, TrendingUp, User, Target, Settings, LogOut } from "lucide-react"
+import { User, Target, Settings, LogOut } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
@@ -13,7 +13,7 @@ export default function Header() {
 
   useEffect(() => {
     const checkUserData = () => {
-      const storedUserData = localStorage.getItem('userData')
+      const storedUserData = localStorage.getItem("userData")
       if (storedUserData) {
         try {
           const user = JSON.parse(storedUserData)
@@ -34,7 +34,7 @@ export default function Header() {
 
     // Listener para mudanças no localStorage (outras abas)
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'userData') {
+      if (e.key === "userData") {
         checkUserData()
       }
     }
@@ -44,72 +44,79 @@ export default function Header() {
       checkUserData()
     }
 
-    window.addEventListener('storage', handleStorageChange)
-    window.addEventListener('userDataChanged', handleStorageChangeLocal)
+    window.addEventListener("storage", handleStorageChange)
+    window.addEventListener("userDataChanged", handleStorageChangeLocal)
 
     return () => {
-      window.removeEventListener('storage', handleStorageChange)
-      window.removeEventListener('userDataChanged', handleStorageChangeLocal)
+      window.removeEventListener("storage", handleStorageChange)
+      window.removeEventListener("userDataChanged", handleStorageChangeLocal)
     }
   }, [])
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Element
-      if (!target.closest('.user-menu')) {
+      if (!target.closest(".user-menu")) {
         setShowUserMenu(false)
       }
     }
 
     if (showUserMenu) {
-      document.addEventListener('mousedown', handleClickOutside)
+      document.addEventListener("mousedown", handleClickOutside)
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener("mousedown", handleClickOutside)
     }
   }, [showUserMenu])
 
   const handleLogout = () => {
-    localStorage.removeItem('userData')
+    localStorage.removeItem("userData")
     setShowUserMenu(false)
     setUserData(null)
 
-    window.dispatchEvent(new Event('userDataChanged'))
-    router.push('/login')
+    window.dispatchEvent(new Event("userDataChanged"))
+    router.push("/login")
   }
 
   const handlePreferences = () => {
     setShowUserMenu(false)
-    router.push('/preferencias')
+    router.push("/preferencias")
   }
 
+  const handleLoginRedirect = () => {
+    console.log("[v0] Redirecting to login page")
+    router.push("/login")
+  }
 
   return (
     <header className="border-b border-green-700 bg-[#063825] backdrop-blur supports-[backdrop-filter]:bg-[#063825] sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <div className="flex items-center space-x-8">
-           <Link href="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
-             <div className="flex items-center space-x-2">
-               <span className="text-xl font-bold text-white">UpTrail Hub</span>
-             </div>
-           </Link>
-           {userData && (
-             <Link href="/dashboard" className="text-white hover:text-green-200 transition-colors font-medium flex items-center space-x-1">
-               <Target className="w-4 h-4" />
-               <span>Dashboard</span>
-             </Link>
-           )}
-         </div>
-         <nav className="hidden md:flex items-center space-x-8">
-           <Link href="/trilhas" className="text-white hover:text-green-200 transition-colors font-medium">
-             Trilhas
-           </Link>
-           <Link href="/mentoria" className="text-white hover:text-green-200 transition-colors font-medium">
-             Mentorias
-           </Link>
-           {userData ? (
-             <>
+          <Link href="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
+            <div className="flex items-center space-x-2">
+              <span className="text-xl font-bold text-white">UpTrail Hub</span>
+            </div>
+          </Link>
+          {userData && (
+            <Link
+              href="/dashboard"
+              className="text-white hover:text-green-200 transition-colors font-medium flex items-center space-x-1"
+            >
+              <Target className="w-4 h-4" />
+              <span>Dashboard</span>
+            </Link>
+          )}
+        </div>
+        <nav className="hidden md:flex items-center space-x-8">
+          <Link href="/trilhas" className="text-white hover:text-green-200 transition-colors font-medium">
+            Trilhas
+          </Link>
+          <Link href="/mentoria" className="text-white hover:text-green-200 transition-colors font-medium">
+            Mentorias
+          </Link>
+          {userData ? (
+            <>
               <div className="relative user-menu">
                 <Button
                   variant="ghost"
@@ -144,10 +151,15 @@ export default function Header() {
               </div>
             </>
           ) : (
-            <Link href="/login" className="text-white hover:text-green-200 transition-colors font-medium flex items-center space-x-1">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleLoginRedirect}
+              className="text-white hover:text-green-200 transition-colors font-medium flex items-center space-x-1 hover:bg-white/10"
+            >
               <User className="w-4 h-4" />
               <span>Acessar Hub</span>
-            </Link>
+            </Button>
           )}
         </nav>
       </div>
