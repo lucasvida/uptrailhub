@@ -90,7 +90,6 @@ export default function Header() {
   }
 
   const handleLoginRedirect = () => {
-    console.log("[v0] Redirecting to login page")
     router.push("/login")
   }
 
@@ -123,11 +122,6 @@ export default function Header() {
           <Link href="/empresas" className="text-white hover:text-green-200 transition-colors font-medium">
             Empresas
           </Link>
-          {userData && (
-            <Link href="/perfil" className="text-white hover:text-green-200 transition-colors font-medium">
-              Perfil
-            </Link>
-          )}
           {userData ? (
             <>
               <div className="relative user-menu">
@@ -147,21 +141,21 @@ export default function Header() {
                     </div>
                     <button
                       onClick={handleProfile}
-                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
+                      className="cursor-pointer block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
                     >
                       <UserCircle className="w-4 h-4" />
                       <span>Meu Perfil</span>
                     </button>
                     <button
                       onClick={handlePreferences}
-                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
+                      className="cursor-pointer block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
                     >
                       <Settings className="w-4 h-4" />
                       <span>Preferências</span>
                     </button>
                     <button
                       onClick={handleLogout}
-                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
+                      className="cursor-pointer block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
                     >
                       <LogOut className="w-4 h-4" />
                       <span>Sair</span>

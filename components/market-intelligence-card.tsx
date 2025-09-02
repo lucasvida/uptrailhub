@@ -1,8 +1,11 @@
+"use client"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { TrendingUp, MapPin, Clock, Users, Briefcase, Target, Info } from "lucide-react"
-import type { MarketOpportunity } from "@/lib/data"
+import { UserStorage } from "@/types/User"
+import { MarketOpportunity } from "@/types/Market"
+import { useState, useEffect } from "react"
 
 interface MarketIntelligenceCardProps {
   marketIntelligence: {
@@ -17,6 +20,20 @@ interface MarketIntelligenceCardProps {
 }
 
 export function MarketIntelligenceCard({ marketIntelligence }: MarketIntelligenceCardProps) {
+  const [userData, setUserData] = useState<UserStorage | null>(null)
+
+  useEffect(() => {
+    const storedUserData = localStorage.getItem("userData")
+    if (storedUserData) {
+      try {
+        const user = JSON.parse(storedUserData)
+        setUserData(user)
+      } catch (error) {
+        console.error("Erro ao carregar dados do usuário:", error)
+      }
+    }
+  }, [])
+  
   const getDemandColor = (level: string) => {
     switch (level) {
       case "alta":
@@ -27,19 +44,6 @@ export function MarketIntelligenceCard({ marketIntelligence }: MarketIntelligenc
         return "bg-red-100 text-red-800 border-red-200"
       default:
         return "bg-gray-100 text-gray-800 border-gray-200"
-    }
-  }
-
-  const getUrgencyColor = (urgency: string) => {
-    switch (urgency) {
-      case "alta":
-        return "bg-red-500"
-      case "média":
-        return "bg-yellow-500"
-      case "baixa":
-        return "bg-green-500"
-      default:
-        return "bg-gray-500"
     }
   }
 
@@ -100,7 +104,7 @@ export function MarketIntelligenceCard({ marketIntelligence }: MarketIntelligenc
                 <div
                   key={index}
                   className={`border rounded-lg p-4 hover:bg-muted/50 transition-colors ${
-                    index >= 2 ? "blur-sm opacity-70" : ""
+                    userData?.signature != "premium" && index >= 2 ? "blur-sm opacity-70" : ""
                   }`}
                 >
                   <div className="flex items-start justify-between mb-2">

@@ -7,53 +7,13 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import Link from "next/link"
-
-const empresasDetalhadas = {
-  nubank: {
-    id: 1,
-    nome: "Nubank",
-    logo: "/placeholder.svg?height=100&width=100&text=Nu",
-    descricao: "Fintech líder em inovação financeira na América Latina",
-    setor: "Fintech",
-    funcionarios: "5000+",
-    localizacao: "São Paulo, SP",
-    rating: 4.8,
-    sobre:
-      "O Nubank é uma das maiores fintechs do mundo, revolucionando o sistema financeiro brasileiro com produtos simples, transparentes e livres de burocracias desnecessárias.",
-    vagas: [
-      {
-        id: 1,
-        titulo: "Desenvolvedor Frontend React",
-        nivel: "Pleno",
-        salarioMin: 8000,
-        salarioMax: 12000,
-        skills: ["React", "TypeScript", "Next.js", "Tailwind CSS"],
-        modalidade: "Remoto",
-        urgencia: "alta",
-        match: 85,
-        descricao: "Desenvolver interfaces modernas e responsivas para nossos produtos financeiros.",
-      },
-      {
-        id: 2,
-        titulo: "Product Designer",
-        nivel: "Senior",
-        salarioMin: 10000,
-        salarioMax: 15000,
-        skills: ["Figma", "Design System", "UX Research", "Prototyping"],
-        modalidade: "Híbrido",
-        urgencia: "media",
-        match: 45,
-        descricao: "Criar experiências excepcionais para milhões de usuários do Nubank.",
-      },
-    ],
-  },
-  // ... outras empresas podem ser adicionadas aqui
-}
+import { empresasDetalhadas } from "@/lib/data"
+import { UserStorage } from "@/types/User"
 
 export default function EmpresaDetalhePage() {
   const params = useParams()
   const slug = params.slug as string
-  const [userData, setUserData] = useState<any>(null)
+  const [userData, setUserData] = useState<UserStorage | null>(null)
 
   useEffect(() => {
     const storedUserData = localStorage.getItem("userData")
@@ -92,17 +52,6 @@ export default function EmpresaDetalhePage() {
     if (match >= 80) return <CheckCircle className="w-4 h-4" />
     if (match >= 60) return <Clock className="w-4 h-4" />
     return <XCircle className="w-4 h-4" />
-  }
-
-  const getUrgenciaColor = (urgencia: string) => {
-    switch (urgencia) {
-      case "alta":
-        return "bg-red-100 text-red-800 border-red-200"
-      case "media":
-        return "bg-yellow-100 text-yellow-800 border-yellow-200"
-      default:
-        return "bg-green-100 text-green-800 border-green-200"
-    }
   }
 
   return (
@@ -158,7 +107,7 @@ export default function EmpresaDetalhePage() {
                 key={vaga.id}
                 className="overflow-hidden bg-white border border-gray-200 hover:shadow-md transition-shadow"
               >
-                <CardHeader className="bg-gray-50 border-b border-gray-100 p-4">
+                <CardHeader className="border-b border-gray-100 p-4">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <CardTitle className="text-lg font-semibold text-gray-900">{vaga.titulo}</CardTitle>
@@ -169,9 +118,6 @@ export default function EmpresaDetalhePage() {
                         </Badge>
                         <Badge variant="outline" className="text-xs">
                           {vaga.modalidade}
-                        </Badge>
-                        <Badge className={`${getUrgenciaColor(vaga.urgencia)} text-xs`}>
-                          {vaga.urgencia === "alta" ? "Urgente" : vaga.urgencia === "media" ? "Moderada" : "Normal"}
                         </Badge>
                       </div>
                     </div>

@@ -25,31 +25,14 @@ import {
   Send
 } from "lucide-react"
 import Link from "next/link"
-import { trilhasData } from "@/lib/data"
+import { recentMentorias, sugestoesTrilhas, trilhasData, trilhasEmAndamento } from "@/lib/data"
 import AuthGuard from "@/components/auth-guard"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-
-interface UserData {
-  id: string
-  email: string
-  signature: "free" | "premium"
-  isAuthenticated: boolean
-  loginTime: string
-}
-
-interface Mentoria {
-  id: string
-  mentor: string
-  topic: string
-  date: string
-  duration: string
-  rating: number
-}
+import { UserStorage } from "@/types/User"
 
 export default function DashboardPage() {
-  const [userData, setUserData] = useState<UserData | null>(null)
+  const [userData, setUserData] = useState<UserStorage | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
   const [isGenerating, setIsGenerating] = useState(false)
   const [aiFormData, setAiFormData] = useState({
@@ -59,7 +42,6 @@ export default function DashboardPage() {
     timeCommitment: ""
   })
   const [generatedTrilha, setGeneratedTrilha] = useState<any>(null)
-  const router = useRouter()
 
   useEffect(() => {
     const storedUserData = localStorage.getItem('userData')
@@ -73,72 +55,7 @@ export default function DashboardPage() {
     }
   }, [])
 
-  const recentMentorias: Mentoria[] = [
-    {
-      id: "1",
-      mentor: "Ana Silva",
-      topic: "React Hooks Avançados",
-      date: "2024-01-15",
-      duration: "1h 30min",
-      rating: 5
-    },
-    {
-      id: "2",
-      mentor: "Carlos Mendes",
-      topic: "Machine Learning Básico",
-      date: "2024-01-10",
-      duration: "2h",
-      rating: 4
-    },
-    {
-      id: "3",
-      mentor: "Mariana Costa",
-      topic: "Design Systems",
-      date: "2024-01-05",
-      duration: "1h 45min",
-      rating: 5
-    }
-  ]
-
-  const trilhasEmAndamento = [
-    {
-      id: "frontend-developer",
-      title: "Desenvolvedor Front-end Jr.",
-      progress: 65,
-      lastActivity: "2 dias atrás",
-      nextModule: "React Fundamentals",
-      image: "/frontend-coding-screen.png"
-    },
-    {
-      id: "data-scientist",
-      title: "Cientista de Dados",
-      progress: 32,
-      lastActivity: "1 semana atrás",
-      nextModule: "Estatística e Probabilidade",
-      image: "/data-science-analytics.png"
-    }
-  ]
-
-  const sugestoesTrilhas = [
-    {
-      id: "ux-ui-designer",
-      title: "Designer UX/UI",
-      description: "Crie experiências digitais incríveis",
-      demandLevel: "alta",
-      salary: "R$ 5.000 - R$ 12.000",
-      duration: "5 meses",
-      image: "/professional-woman-designer.png"
-    },
-    {
-      id: "devops-engineer",
-      title: "Engenheiro DevOps",
-      description: "Automatize e otimize infraestrutura",
-      demandLevel: "alta",
-      salary: "R$ 6.000 - R$ 15.000",
-      duration: "6 meses",
-      image: "/professional-devops-engineer.png"
-    }
-  ]
+  
 
   const availableTrilhas = Object.values(trilhasData).map(trilha => ({
     ...trilha,

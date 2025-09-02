@@ -30,8 +30,9 @@ import {
   Crown,
   TrendingUp,
 } from "lucide-react"
-import { mentorsData, type Mentor } from "@/lib/data"
 import { useRouter } from "next/navigation"
+import { Mentor } from "@/types/Mentoria"
+import { mentorsData } from "@/lib/data"
 
 type AIMentor = {
   id: string

@@ -54,9 +54,6 @@ export default function LoginPage() {
         title: "Login realizado com sucesso!",
         description: "Bem-vindo de volta!",
       })
-      
-      console.log("Login realizado com sucesso!", userData)
-      
       router.push('/dashboard')
     }, 2000)
   }
