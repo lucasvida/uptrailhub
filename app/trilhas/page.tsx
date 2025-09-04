@@ -1,11 +1,32 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Users, Star, Clock, Filter, Search, TrendingUp, DollarSign, Target, Zap } from "lucide-react"
+import { Users, Star, Clock, Filter, Search, TrendingUp, DollarSign, Target, Zap, Calendar, Crown, MessageCircle, Footprints } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { trilhasData } from "@/lib/data"
+import { useEffect, useState } from "react"
+import { UserStorage } from "@/types/User"
+import { PremiumOfferCard } from "@/components/premium-offer"
 
 export default function TrilhasPage() {
+  const [userData, setUserData] = useState<UserStorage | null>(null)
+  useEffect(() => {
+    const storedUserData = localStorage.getItem('userData')
+    if (storedUserData) {
+      try {
+        const user = JSON.parse(storedUserData)
+        if (user.isAuthenticated) {
+          setUserData(user)
+        }
+      } catch (error) {
+        console.error('Erro ao carregar dados do usuário:', error)
+      }
+    } else {
+    }
+  }, [])
+  
   const trilhas = Object.values(trilhasData).concat([
     {
       id: "backend-developer",
@@ -126,30 +147,6 @@ export default function TrilhasPage() {
     },
   ])
 
-  const getDemandIndicator = (trilha: any) => {
-    if (!trilha.marketIntelligence) return null
-
-    const { demandLevel, realOpportunities } = trilha.marketIntelligence
-    const hasUrgentJobs = realOpportunities.some((job: any) => job.urgency === "alta")
-
-    if (demandLevel === "alta" && hasUrgentJobs) {
-      return (
-        <div className="absolute top-2 right-2 flex items-center gap-1 bg-yellow-500 text-white px-2 py-1 rounded-full text-xs font-medium">
-          <Zap className="w-3 h-3" />
-          Alta Demanda
-        </div>
-      )
-    } else if (demandLevel === "alta") {
-      return (
-        <div className="absolute top-2 right-2 flex items-center gap-1 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-medium">
-          <Target className="w-3 h-3" />
-          Alta Demanda
-        </div>
-      )
-    }
-    return null
-  }
-
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
@@ -194,6 +191,14 @@ export default function TrilhasPage() {
         </div>
       </section>
 
+      <section className="px-4 pb-16">
+        <div className="container mx-auto max-w-6xl">
+          {(userData && userData.signature === "free") && (
+                <PremiumOfferCard/>
+              )}
+        </div>
+      </section>
+
       {/* Trilhas Grid */}
       <section className="px-4 pb-16">
         <div className="container mx-auto">
@@ -203,7 +208,6 @@ export default function TrilhasPage() {
                 key={trilha.id}
                 className="group hover:shadow-lg transition-all duration-300 border-0 bg-card relative"
               >
-                {getDemandIndicator(trilha)}
                 <a href={`/trilhas/${trilha.id}`} className="block">
                   <CardHeader className="pb-4">
                     <div className="w-full h-48 bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg mb-4 overflow-hidden">
