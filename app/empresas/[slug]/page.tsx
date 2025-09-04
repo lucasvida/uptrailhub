@@ -2,13 +2,24 @@
 
 import { useState, useEffect } from "react"
 import { useParams } from "next/navigation"
-import { ArrowLeft, MapPin, DollarSign, Users, Star, Clock, CheckCircle, XCircle } from "lucide-react"
+import {
+  ArrowLeft,
+  MapPin,
+  DollarSign,
+  Users,
+  Star,
+  Clock,
+  CheckCircle,
+  XCircle,
+  BookOpen,
+  TrendingUp,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import Link from "next/link"
-import { empresasDetalhadas } from "@/lib/data"
-import { UserStorage } from "@/types/User"
+import { empresasDetalhadas, trilhas } from "@/lib/data"
+import type { UserStorage } from "@/types/User"
 
 export default function EmpresaDetalhePage() {
   const params = useParams()
@@ -54,6 +65,27 @@ export default function EmpresaDetalhePage() {
     return <XCircle className="w-4 h-4" />
   }
 
+  const getTrilhasRecomendadas = () => {
+    const skillsNecessarias = new Set<string>()
+
+    // Coleta todas as skills das vagas da empresa
+    empresa.vagas.forEach((vaga) => {
+      vaga.skills.forEach((skill) => skillsNecessarias.add(skill.toLowerCase()))
+    })
+
+    // Mapeia trilhas que correspondem às skills necessárias
+    const trilhasRecomendadas = trilhas
+      .filter((trilha) => {
+        const trilhaSkills = trilha.skills?.map((s) => s.toLowerCase()) || []
+        return trilhaSkills.some((skill) => skillsNecessarias.has(skill))
+      })
+      .slice(0, 3) // Limita a 3 trilhas
+
+    return trilhasRecomendadas
+  }
+
+  const trilhasRecomendadas = getTrilhasRecomendadas()
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50">
       <div className="container mx-auto px-4 py-8">
@@ -97,6 +129,46 @@ export default function EmpresaDetalhePage() {
             </CardContent>
           </Card>
         </div>
+
+        {trilhasRecomendadas.length > 0 && (
+          <div className="mb-8">
+            <div className="flex items-center space-x-2 mb-6">
+              <TrendingUp className="w-6 h-6 text-green-600" />
+              <h2 className="text-2xl font-bold text-gray-900">Trilhas Recomendadas</h2>
+            </div>
+            <p className="text-gray-600 mb-6">
+              Baseado nas vagas disponíveis na {empresa.nome}, recomendamos estas trilhas para você se preparar:
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {trilhasRecomendadas.map((trilha) => (
+                <Card key={trilha.id} className="hover:shadow-md transition-shadow">
+                  <CardContent className="p-6">
+                    <div className="flex items-start space-x-4">
+                      <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                        <BookOpen className="w-6 h-6 text-green-600" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-gray-900 mb-2">{trilha.titulo}</h3>
+                        <p className="text-sm text-gray-600 mb-3 line-clamp-2">{trilha.descricao}</p>
+                        <div className="flex items-center justify-between">
+                          <Badge variant="outline" className="text-xs">
+                            {trilha.nivel}
+                          </Badge>
+                          <Link href={`/trilhas/${trilha.slug}`}>
+                            <Button size="sm" variant="outline" className="text-xs bg-transparent">
+                              Ver Trilha
+                            </Button>
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="space-y-6">
           <h2 className="text-2xl font-bold text-gray-900">Vagas Disponíveis ({empresa.vagas.length})</h2>

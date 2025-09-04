@@ -122,6 +122,9 @@ export default function Header() {
           <Link href="/empresas" className="text-white hover:text-green-200 transition-colors font-medium">
             Empresas
           </Link>
+          <Link href="/ranking" className="text-white hover:text-green-200 transition-colors font-medium">
+            Ranking
+          </Link>
           {userData ? (
             <>
               <div className="relative user-menu">

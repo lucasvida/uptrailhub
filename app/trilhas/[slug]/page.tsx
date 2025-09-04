@@ -1,3 +1,5 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -18,19 +20,24 @@ import {
   Play,
 } from "lucide-react"
 import { trilhasData } from "@/lib/data"
+import { useRouter } from "next/navigation"
 
-export default async function TrilhaPage({ params }: { params: { slug: string } }) {
-  const { slug } = await params
+export default function TrilhaPage({ params }: { params: { slug: string } }) {
+  const { slug } = params
+  const router = useRouter()
   const trilha = trilhasData[slug]
+
+  const handleStartTrilha = () => {
+    console.log("[v0] Iniciando trilha:", slug)
+    router.push(`/trilhas/${slug}/progresso`)
+  }
 
   if (!trilha) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-foreground mb-4">Trilha não encontrada</h1>
-          <Button asChild>
-            <a href="/trilhas">Voltar às Trilhas</a>
-          </Button>
+          <Button onClick={() => router.push("/trilhas")}>Voltar às Trilhas</Button>
         </div>
       </div>
     )
@@ -101,8 +108,8 @@ export default async function TrilhaPage({ params }: { params: { slug: string } 
                   <div className="text-sm text-muted-foreground">Crescimento</div>
                 </div>
               </div>
-              <Button className="flex-1 cursor-pointer">
-                <Play className="w-4 h-4 mr-2" /> {/* Added play icon to button */}
+              <Button className="flex-1 cursor-pointer" onClick={handleStartTrilha}>
+                <Play className="w-4 h-4 mr-2" />
                 Iniciar Trilha
               </Button>
             </div>

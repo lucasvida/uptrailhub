@@ -1,4 +1,4 @@
-  export interface MarketOpportunity {
+export interface MarketOpportunity {
     company: string
     position: string
     location: string

@@ -46,4 +46,3 @@ export interface Trilha {
     contents: Content[]
     completed: boolean
   }
-  
