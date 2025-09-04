@@ -13,6 +13,7 @@ import {
   XCircle,
   BookOpen,
   TrendingUp,
+  Lock,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -68,18 +69,16 @@ export default function EmpresaDetalhePage() {
   const getTrilhasRecomendadas = () => {
     const skillsNecessarias = new Set<string>()
 
-    // Coleta todas as skills das vagas da empresa
     empresa.vagas.forEach((vaga) => {
       vaga.skills.forEach((skill) => skillsNecessarias.add(skill.toLowerCase()))
     })
 
-    // Mapeia trilhas que correspondem às skills necessárias
     const trilhasRecomendadas = trilhas
       .filter((trilha) => {
         const trilhaSkills = trilha.skills?.map((s) => s.toLowerCase()) || []
         return trilhaSkills.some((skill) => skillsNecessarias.has(skill))
       })
-      .slice(0, 3) // Limita a 3 trilhas
+      .slice(0, 3)
 
     return trilhasRecomendadas
   }
@@ -129,46 +128,6 @@ export default function EmpresaDetalhePage() {
             </CardContent>
           </Card>
         </div>
-
-        {trilhasRecomendadas.length > 0 && (
-          <div className="mb-8">
-            <div className="flex items-center space-x-2 mb-6">
-              <TrendingUp className="w-6 h-6 text-green-600" />
-              <h2 className="text-2xl font-bold text-gray-900">Trilhas Recomendadas</h2>
-            </div>
-            <p className="text-gray-600 mb-6">
-              Baseado nas vagas disponíveis na {empresa.nome}, recomendamos estas trilhas para você se preparar:
-            </p>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {trilhasRecomendadas.map((trilha) => (
-                <Card key={trilha.id} className="hover:shadow-md transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="flex items-start space-x-4">
-                      <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                        <BookOpen className="w-6 h-6 text-green-600" />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-gray-900 mb-2">{trilha.titulo}</h3>
-                        <p className="text-sm text-gray-600 mb-3 line-clamp-2">{trilha.descricao}</p>
-                        <div className="flex items-center justify-between">
-                          <Badge variant="outline" className="text-xs">
-                            {trilha.nivel}
-                          </Badge>
-                          <Link href={`/trilhas/${trilha.slug}`}>
-                            <Button size="sm" variant="outline" className="text-xs bg-transparent">
-                              Ver Trilha
-                            </Button>
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        )}
 
         <div className="space-y-6">
           <h2 className="text-2xl font-bold text-gray-900">Vagas Disponíveis ({empresa.vagas.length})</h2>
@@ -246,6 +205,50 @@ export default function EmpresaDetalhePage() {
               </Card>
             ))}
           </div>
+          {trilhasRecomendadas.length > 0 && (
+          <div className="mb-8">
+            <div className="flex items-center space-x-2 mb-6">
+              <TrendingUp className="w-6 h-6 text-green-600" />
+              <h2 className="text-2xl font-bold text-gray-900">Trilhas Recomendadas</h2>
+            </div>
+            <p className="text-gray-600 mb-6">
+              Baseado nas vagas disponíveis na {empresa.nome}, recomendamos estas trilhas para você se preparar:
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {trilhasRecomendadas.map((trilha) => (
+                <Card key={trilha.id} className="hover:shadow-md transition-shadow relative">
+                  <CardContent className="p-6">
+                    <div className={`flex items-start space-x-4 ${userData?.signature === "free" ? 'blur-[2px]' : ''}`}>
+                      <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                        <BookOpen className="w-6 h-6 text-green-600" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-gray-900 mb-2">{trilha.title}</h3>
+                        <p className="text-sm text-gray-600 mb-3 line-clamp-2">{trilha.description}</p>
+                        <div className="flex items-center justify-between">
+                          <Badge variant="outline" className="text-xs">
+                            {trilha.level}
+                          </Badge>
+                          <Link href={`/trilhas/${trilha.salary}`}>
+                            <Button size="sm" variant="outline" className="text-xs bg-transparent">
+                              Ver Trilha
+                            </Button>
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                    {userData?.signature === "free" && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-white/20 backdrop-blur-[0.5px] rounded-lg">
+                        <Lock className="w-10 h-10 text-gray-500" />
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
         </div>
       </div>
     </div>

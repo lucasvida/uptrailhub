@@ -1,5 +1,6 @@
 "use client"
 
+import { use } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -22,13 +23,12 @@ import {
 import { trilhasData } from "@/lib/data"
 import { useRouter } from "next/navigation"
 
-export default function TrilhaPage({ params }: { params: { slug: string } }) {
-  const { slug } = params
+export default function TrilhaPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = use(params)
   const router = useRouter()
   const trilha = trilhasData[slug]
 
   const handleStartTrilha = () => {
-    console.log("[v0] Iniciando trilha:", slug)
     router.push(`/trilhas/${slug}/progresso`)
   }
 
