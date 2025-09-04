@@ -29,6 +29,7 @@ import {
   Sparkles,
   Crown,
   TrendingUp,
+  X,
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { Mentor } from "@/types/Mentoria"
@@ -80,7 +81,67 @@ export default function MentoriaPage() {
     [],
   )
   const [newMessage, setNewMessage] = useState("")
+  const [sessionId, setSessionId] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [activeTab, setActiveTab] = useState("human")
   const router = useRouter();
+
+  const generateSessionId = () => {
+    const timestamp = Date.now()
+    const randomString = Math.random().toString(36).substring(2, 15)
+    return `session_${timestamp}_${randomString}`
+  }
+
+  const sendMessageToAI = async (message: string) => {
+    try {
+      setIsLoading(true)
+      
+      const response = await fetch('https://hubedu.up.railway.app/webhook/bothub', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          texto: message,
+          sessionId: sessionId
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error('Erro na requisição')
+      }
+
+      const data = await response.text()
+      return data
+    } catch (error) {
+      console.error('Erro ao enviar mensagem para IA:', error)
+      return 'Desculpe, ocorreu um erro ao processar sua mensagem. Tente novamente.'
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  // Função para calcular preço com desconto para usuários premium
+  const getPriceWithDiscount = (price: string) => {
+    if (!userData || userData.signature !== "premium") {
+      return { originalPrice: price, discountedPrice: null, isPremium: false }
+    }
+
+    // Extrair valor numérico do preço (assumindo formato "R$ XX" ou similar)
+    const numericPrice = parseFloat(price.replace(/[^\d,]/g, '').replace(',', '.'))
+    if (isNaN(numericPrice)) {
+      return { originalPrice: price, discountedPrice: null, isPremium: true }
+    }
+
+    const discountedPrice = numericPrice * 0.6 // 40% de desconto
+    const formattedDiscountedPrice = `R$ ${discountedPrice.toFixed(2).replace('.', ',')}`
+    
+    return { 
+      originalPrice: price, 
+      discountedPrice: formattedDiscountedPrice, 
+      isPremium: true 
+    }
+  }
 
   useEffect(() => {
     const storedUserData = localStorage.getItem('userData')
@@ -107,52 +168,84 @@ export default function MentoriaPage() {
     }
   }, [selectedMentor, selectedAIMentor, userData, router]);
 
-  const handleSendMessage = () => {
-    if (!newMessage.trim() || (!selectedMentor && !selectedAIMentor)) return
+  // Gerar sessionId quando um mentor de IA for selecionado
+  useEffect(() => {
+    if (selectedAIMentor && !sessionId) {
+      setSessionId(generateSessionId())
+    }
+  }, [selectedAIMentor, sessionId]);
+
+  const handleEndChat = () => {
+    setSelectedMentor(null)
+    setSelectedAIMentor(null)
+    setChatMessages([])
+    setSessionId(null)
+    setIsLoading(false)
+    setActiveTab("ai")
+  }
+
+  const handleSendMessage = async () => {
+    if (!newMessage.trim() || (!selectedMentor && !selectedAIMentor) || isLoading) return
 
     const now = new Date()
     const time = now.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
+    const userMessage = newMessage.trim()
 
-    setChatMessages([...chatMessages, { sender: "user", message: newMessage, time }])
+    // Adicionar mensagem do usuário
+    setChatMessages([...chatMessages, { sender: "user", message: userMessage, time }])
+    setNewMessage("")
 
-    setTimeout(
-      () => {
-        let responses: string[]
-
-        if (selectedAIMentor) {
-          responses = [
-            `Olá! Sou ${selectedAIMentor.name}, sua IA mentora especializada. Analisei sua mensagem e posso te ajudar com estratégias personalizadas. Vamos começar?`,
-            `Excelente pergunta! Com base nos dados de mercado mais recentes e minha análise de ${selectedAIMentor.specialties.join(
-              ", ",
-            )}, posso te dar insights valiosos.`,
-            `Entendo perfeitamente sua situação. Vou criar um plano personalizado baseado no seu perfil e objetivos. Que tal começarmos identificando seus pontos fortes?`,
-            `Ótimo! Posso te ajudar com isso 24/7. Baseado em milhares de casos similares, aqui estão as melhores estratégias para sua situação...`,
-          ]
-        } else if (selectedMentor) {
-          responses = [
-            `Olá! Obrigado(a) pela mensagem. Vou analisar sua dúvida e te responder em breve. Como posso te ajudar hoje?`,
-            `Ótima pergunta! Baseado na minha experiência de ${selectedMentor.experience}, posso te dar algumas dicas valiosas sobre isso.`,
-            `Entendo sua situação. Já passei por algo similar no início da minha carreira. Vamos conversar sobre as melhores estratégias.`,
-          ]
-        } else {
-          responses = ["Olá! Como posso te ajudar hoje?"]
-        }
-
-        const randomResponse = responses[Math.floor(Math.random() * responses.length)]
-
+    // Se for mentor de IA, fazer requisição para a API
+    if (selectedAIMentor && sessionId) {
+      try {
+        const aiResponse = await sendMessageToAI(userMessage)
+        const responseTime = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
+        
         setChatMessages((prev) => [
           ...prev,
           {
             sender: "mentor",
-            message: randomResponse,
-            time: new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }),
+            message: aiResponse,
+            time: responseTime,
           },
         ])
-      },
-      selectedAIMentor ? 1000 : 2000,
-    )
+      } catch (error) {
+        console.error('Erro ao obter resposta da IA:', error)
+        const errorTime = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
+        
+        setChatMessages((prev) => [
+          ...prev,
+          {
+            sender: "mentor",
+            message: "Desculpe, ocorreu um erro ao processar sua mensagem. Tente novamente.",
+            time: errorTime,
+          },
+        ])
+      }
+    } else if (selectedMentor) {
+      // Resposta simulada para mentores humanos
+      setTimeout(
+        () => {
+          const responses = [
+            `Olá! Obrigado(a) pela mensagem. Vou analisar sua dúvida e te responder em breve. Como posso te ajudar hoje?`,
+            `Ótima pergunta! Baseado na minha experiência de ${selectedMentor.experience}, posso te dar algumas dicas valiosas sobre isso.`,
+            `Entendo sua situação. Já passei por algo similar no início da minha carreira. Vamos conversar sobre as melhores estratégias.`,
+          ]
 
-    setNewMessage("")
+          const randomResponse = responses[Math.floor(Math.random() * responses.length)]
+
+          setChatMessages((prev) => [
+            ...prev,
+            {
+              sender: "mentor",
+              message: randomResponse,
+              time: new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }),
+            },
+          ])
+        },
+        2000,
+      )
+    }
   }
 
   if (userData && (selectedMentor || selectedAIMentor)) { 
@@ -290,7 +383,6 @@ export default function MentoriaPage() {
               </Card>
             </div>
 
-            {/* Chat Area */}
             <div className="lg:col-span-3">
               <Card className="bg-card border-0 h-full flex flex-col">
                 <CardHeader className="border-b border-border">
@@ -312,11 +404,21 @@ export default function MentoriaPage() {
                         )}
                       </CardDescription>
                     </div>
-                    <div className="text-right">
-                      <div className="text-sm font-medium">{isAI ? "Gratuito" : selectedMentor!.price}</div>
-                      <div className="text-xs text-muted-foreground">{isAI ? "Ilimitado" : "por sessão"}</div>
+                    <div className="flex items-center gap-2">
+                      <div className="text-right">
+                        <div className="text-sm font-medium">{isAI ? "Gratuito" : selectedMentor!.price}</div>
+                        <div className="text-xs text-muted-foreground">{isAI ? "Ilimitado" : "por sessão"}</div>
+                      </div>      
                     </div>
                   </div>
+                  <Button
+                    size="sm"
+                    onClick={handleEndChat}
+                    className="cursor-pointer"
+                    title="Encerrar sessão"
+                  >
+                    Encerrar sessão
+                  </Button>
                 </CardHeader>
 
                 {/* Messages */}
@@ -390,8 +492,12 @@ export default function MentoriaPage() {
                         }
                       }}
                     />
-                    <Button onClick={handleSendMessage} disabled={!newMessage.trim()}>
-                      <Send className="w-4 h-4" />
+                    <Button onClick={handleSendMessage} disabled={!newMessage.trim() || isLoading}>
+                      {isLoading ? (
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        <Send className="w-4 h-4" />
+                      )}
                     </Button>
                   </div>
                   <p className="text-xs text-muted-foreground mt-2">
@@ -458,7 +564,7 @@ export default function MentoriaPage() {
 
       <section className="px-4 pb-16">
         <div className="container mx-auto max-w-6xl">
-          <Tabs defaultValue={userData?.signature === "free" ? "ai" : "human"} className="w-full">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           {(userData && userData.signature === "free") && (
                 <PremiumOfferCard/>
               )}
@@ -470,7 +576,10 @@ export default function MentoriaPage() {
                 <MessageCircle className="w-4 h-4" />
                 Mentores Especializados
               </TabsTrigger>
-              <TabsTrigger value="ai" className="flex items-center gap-2 cursor-pointer">
+              <TabsTrigger 
+                value="ai" 
+                className="flex items-center gap-2 cursor-pointer"
+              >
                 <Bot className="w-4 h-4" />
                 Mentoria com IA
               </TabsTrigger>
@@ -513,7 +622,22 @@ export default function MentoriaPage() {
                               </div>
                             </div>
                             <div className="text-right">
-                              <div className="text-lg font-bold text-primary">{mentor.price}</div>
+                              {(() => {
+                                const priceInfo = getPriceWithDiscount(mentor.price)
+                                return (
+                                  <div className="space-y-1">
+                                    {priceInfo.isPremium && priceInfo.discountedPrice ? (
+                                      <div className="space-y-1">
+                                        <div className="text-lg font-bold text-green-600">{priceInfo.discountedPrice}</div>
+                                        <div className="text-sm text-muted-foreground line-through">{priceInfo.originalPrice}</div>
+                                        <div className="text-xs text-green-600 font-medium">40% OFF - Premium</div>
+                                      </div>
+                                    ) : (
+                                      <div className="text-lg font-bold text-primary">{priceInfo.originalPrice}</div>
+                                    )}
+                                  </div>
+                                )
+                              })()}
                               <div className="text-xs text-muted-foreground">Responde em {mentor.responseTime}</div>
                             </div>
                           </div>

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, use } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -27,43 +27,39 @@ interface CompletedContent {
   [key: string]: boolean
 }
 
-interface CourseCompletion {
-  [key: string]: boolean
-}
-
-export default function TrilhaProgressoPage({ params }: { params: { slug: string } }) {
+export default function TrilhaProgressoPage({ params }: { params: Promise<{ slug: string }> }) {
   const [completedContent, setCompletedContent] = useState<CompletedContent>({})
   const [courseCompleted, setCourseCompleted] = useState(false)
   const [mounted, setMounted] = useState(false)
 
-  const trilha = trilhasData[params.slug]
+  const resolvedParams = use(params)
+  const trilha = trilhasData[resolvedParams.slug]
 
   useEffect(() => {
     setMounted(true)
-    // Load progress from localStorage
-    const savedProgress = localStorage.getItem(`trilha-progress-${params.slug}`)
+    const savedProgress = localStorage.getItem(`trilha-progress-${resolvedParams.slug}`)
     if (savedProgress) {
       setCompletedContent(JSON.parse(savedProgress))
     }
 
-    const savedCompletion = localStorage.getItem(`trilha-completed-${params.slug}`)
+    const savedCompletion = localStorage.getItem(`trilha-completed-${resolvedParams.slug}`)
     if (savedCompletion) {
       setCourseCompleted(JSON.parse(savedCompletion))
     }
-  }, [params.slug])
+  }, [resolvedParams.slug])
 
   useEffect(() => {
     if (mounted) {
       // Save progress to localStorage
-      localStorage.setItem(`trilha-progress-${params.slug}`, JSON.stringify(completedContent))
+      localStorage.setItem(`trilha-progress-${resolvedParams.slug}`, JSON.stringify(completedContent))
     }
-  }, [completedContent, params.slug, mounted])
+  }, [completedContent, resolvedParams.slug, mounted])
 
   useEffect(() => {
     if (mounted) {
-      localStorage.setItem(`trilha-completed-${params.slug}`, JSON.stringify(courseCompleted))
+      localStorage.setItem(`trilha-completed-${resolvedParams.slug}`, JSON.stringify(courseCompleted))
     }
-  }, [courseCompleted, params.slug, mounted])
+  }, [courseCompleted, resolvedParams.slug, mounted])
 
   if (!trilha) {
     return (
@@ -141,15 +137,15 @@ export default function TrilhaProgressoPage({ params }: { params: { slug: string
         <div className="container mx-auto max-w-6xl">
           <div className="flex items-center gap-4 mb-6">
             <Button variant="ghost" size="sm" asChild>
-              <a href={`/trilhas/${params.slug}`}>
+              <a href={`/trilhas/${resolvedParams.slug}`}>
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Voltar
               </a>
             </Button>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2">
+          <div className="max-w-4xl">
+            <div>
               <div className="flex items-center gap-4 mb-4">
                 <Badge variant="secondary" className="bg-primary/10 text-primary border-0">
                   {trilha.level}
@@ -196,41 +192,17 @@ export default function TrilhaProgressoPage({ params }: { params: { slug: string
                       </div>
                       <Progress value={progressPercentage} className="h-3" />
                     </div>
-
-                    <div className="flex items-center gap-3 pt-4 border-t">
-                      <Checkbox
-                        checked={courseCompleted}
-                        onCheckedChange={handleCourseCompletion}
-                        className="data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600"
-                      />
-                      <div className="flex items-center gap-2">
-                        <Trophy className="w-4 h-4 text-yellow-600" />
-                        <span
-                          className={`font-medium ${courseCompleted ? "text-green-600 line-through" : "text-foreground"}`}
-                        >
-                          Marcar curso como concluído
-                        </span>
+                    
+                    {/* Estatísticas inline */}
+                    <div className="grid grid-cols-2 gap-4 pt-4 border-t">
+                      <div className="text-center p-3 bg-muted/50 rounded-lg">
+                        <div className="text-2xl font-bold text-primary">{completedCount}</div>
+                        <div className="text-xs text-muted-foreground">Concluídos</div>
                       </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            <div className="lg:col-span-1">
-              <Card className="bg-card border-0">
-                <CardHeader>
-                  <CardTitle className="text-lg">Estatísticas</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center p-3 bg-muted/50 rounded-lg">
-                      <div className="text-2xl font-bold text-primary">{completedCount}</div>
-                      <div className="text-xs text-muted-foreground">Concluídos</div>
-                    </div>
-                    <div className="text-center p-3 bg-muted/50 rounded-lg">
-                      <div className="text-2xl font-bold text-orange-600">{totalContent - completedCount}</div>
-                      <div className="text-xs text-muted-foreground">Restantes</div>
+                      <div className="text-center p-3 bg-muted/50 rounded-lg">
+                        <div className="text-2xl font-bold text-orange-600">{totalContent - completedCount}</div>
+                        <div className="text-xs text-muted-foreground">Restantes</div>
+                      </div>
                     </div>
                   </div>
                 </CardContent>

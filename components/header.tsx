@@ -1,6 +1,6 @@
 "use client"
 
-import { User, Target, Settings, LogOut, UserCircle } from "lucide-react"
+import { User, Target, Settings, LogOut, UserCircle, Rocket } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
@@ -84,6 +84,11 @@ export default function Header() {
     router.push("/preferencias")
   }
 
+  const handleTrilhaXp = () => {
+    setShowUserMenu(false)
+    router.push("/ranking")
+  }
+
   const handleProfile = () => {
     setShowUserMenu(false)
     router.push("/perfil")
@@ -122,9 +127,6 @@ export default function Header() {
           <Link href="/empresas" className="text-white hover:text-green-200 transition-colors font-medium">
             Empresas
           </Link>
-          <Link href="/ranking" className="text-white hover:text-green-200 transition-colors font-medium">
-            Ranking
-          </Link>
           {userData ? (
             <>
               <div className="relative user-menu">
@@ -148,6 +150,13 @@ export default function Header() {
                     >
                       <UserCircle className="w-4 h-4" />
                       <span>Meu Perfil</span>
+                    </button>
+                    <button
+                      onClick={handleTrilhaXp}
+                      className="cursor-pointer block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
+                    >
+                      <Rocket className="w-4 h-4" />
+                      <span>TrilhaXP</span>
                     </button>
                     <button
                       onClick={handlePreferences}

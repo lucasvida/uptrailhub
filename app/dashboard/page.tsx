@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
+import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -14,17 +14,13 @@ import {
   Play,
   Target,
   Users,
-  Calendar,
   ArrowRight,
   Trophy,
   Lightbulb,
   Search,
   Sparkles,
   Crown,
-  Filter,
-  Send
-} from "lucide-react"
-import Link from "next/link"
+  Filter} from "lucide-react"
 import { recentMentorias, sugestoesTrilhas, trilhasData, trilhasEmAndamento } from "@/lib/data"
 import AuthGuard from "@/components/auth-guard"
 import { Input } from "@/components/ui/input"
@@ -195,16 +191,24 @@ export default function DashboardPage() {
           </Card>
 
           <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center space-x-4">
-                <div className="p-2 bg-purple-500/10 rounded-lg">
-                  <Trophy className="w-6 h-6 text-purple-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Conquistas</p>
-                  <p className="text-2xl font-bold">8</p>
+            <CardContent className="flex-col p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center space-x-4">
+                  <div className="p-2 bg-purple-500/10 rounded-lg">
+                    <Trophy className="w-6 h-6 text-purple-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Conquistas</p>
+                    <p className="text-2xl font-bold">8</p>
+                  </div>
                 </div>
               </div>
+              <Link href="/ranking">
+                  <Button variant="outline" size="sm" className="cursor-pointer text-purple-600 border-purple-200 hover:bg-purple-400">
+                    Ver TrilhaXP
+                    <ArrowRight className="w-4 h-4 ml-1" />
+                  </Button>
+                </Link>
             </CardContent>
           </Card>
         </div>
@@ -244,7 +248,7 @@ export default function DashboardPage() {
                       </div>
                     </div>
                     <Button size="sm" asChild>
-                      <Link href={`/trilhas/${trilha.id}`}>
+                      <Link href={`/trilhas/${trilha.id}/progresso`}>
                         <Play className="w-4 h-4 mr-1" />
                         Continuar
                       </Link>

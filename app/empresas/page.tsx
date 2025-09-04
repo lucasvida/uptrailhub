@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Search, MapPin, Users, Building2, Star } from "lucide-react"
+import { Search, MapPin, Users, Building2, Star, Lock } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
@@ -93,15 +93,15 @@ export default function EmpresasPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {empresasFiltradas.map((empresa, index) => {
-          const disabled = index >= 2;
+          const disabled = userData?.signature === "free" && index >= 2;
 
           const card = (
             <Card
-              className={`h-full transition-all duration-200 ${
-                disabled ? "blur-[2px] opacity-70 cursor-not-allowed" : "hover:shadow-lg hover:scale-105 cursor-pointer"
+              className={`h-full transition-all duration-200 relative ${
+                disabled ? "" : "hover:shadow-lg hover:scale-105 cursor-pointer"
               }`}
             >
-              <CardContent className="p-6">
+              <CardContent className={`p-6 ${disabled ? "blur-[2px] opacity-70" : ""}`}>
                 <div className="text-center">
                   <img
                     src={empresa.logo || "/placeholder.svg"}
@@ -132,13 +132,18 @@ export default function EmpresasPage() {
                   </Badge>
                 </div>
               </CardContent>
+              {disabled && (
+                <div className="absolute inset-0 flex items-center justify-center bg-white/20 backdrop-blur-[0.5px] rounded-lg">
+                  <Lock className="w-10 h-10 text-gray-500" />
+                </div>
+              )}
             </Card>
           );
 
           return disabled ? (
-            <div key={empresa.id}>{card}</div> // não navegável
+            <div key={empresa.id}>{card}</div>
           ) : (
-            <Link key={empresa.id} href={`/empresas/${empresa.slug}`}>{card}</Link> // navegável
+            <Link key={empresa.id} href={`/empresas/${empresa.slug}`}>{card}</Link>
           );
         })}
         </div>

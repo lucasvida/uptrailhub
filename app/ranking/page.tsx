@@ -6,28 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-
-interface UserRanking {
-  id: number
-  name: string
-  email: string
-  points: number
-  level: number
-  trilhasCompletas: number
-  mentoriasRealizadas: number
-  position: number
-  badge: string
-  avatar: string
-}
-
-interface UserStats {
-  totalPoints: number
-  level: number
-  trilhasCompletas: number
-  mentoriasRealizadas: number
-  nextLevelPoints: number
-  currentLevelPoints: number
-}
+import { mockRanking } from "@/lib/data"
+import { UserStats, UserRanking } from "@/types/Ranking"
 
 export default function RankingPage() {
   const [userStats, setUserStats] = useState<UserStats | null>(null)
@@ -35,14 +15,13 @@ export default function RankingPage() {
   const [currentUser, setCurrentUser] = useState<any>(null)
 
   useEffect(() => {
-    // Verificar usuário logado
     const userData = localStorage.getItem("userData")
+    let user = null
     if (userData) {
-      const user = JSON.parse(userData)
+      user = JSON.parse(userData)
       setCurrentUser(user)
     }
 
-    // Simular dados do usuário atual
     const mockUserStats: UserStats = {
       totalPoints: 2450,
       level: 8,
@@ -51,110 +30,11 @@ export default function RankingPage() {
       nextLevelPoints: 3000,
       currentLevelPoints: 2000,
     }
+
     setUserStats(mockUserStats)
 
-    // Dados mock do ranking
-    const mockRanking: UserRanking[] = [
-      {
-        id: 1,
-        name: "Ana Silva",
-        email: "ana@email.com",
-        points: 4850,
-        level: 12,
-        trilhasCompletas: 8,
-        mentoriasRealizadas: 12,
-        position: 1,
-        badge: "Especialista",
-        avatar: "AS",
-      },
-      {
-        id: 2,
-        name: "Carlos Santos",
-        email: "carlos@email.com",
-        points: 4200,
-        level: 11,
-        trilhasCompletas: 6,
-        mentoriasRealizadas: 15,
-        position: 2,
-        badge: "Mentor Master",
-        avatar: "CS",
-      },
-      {
-        id: 3,
-        name: "Maria Oliveira",
-        email: "maria@email.com",
-        points: 3890,
-        level: 10,
-        trilhasCompletas: 7,
-        mentoriasRealizadas: 8,
-        position: 3,
-        badge: "Aprendiz Avançado",
-        avatar: "MO",
-      },
-      {
-        id: 4,
-        name: "João Costa",
-        email: "joao@email.com",
-        points: 3450,
-        level: 9,
-        trilhasCompletas: 5,
-        mentoriasRealizadas: 10,
-        position: 4,
-        badge: "Desenvolvedor",
-        avatar: "JC",
-      },
-      {
-        id: 5,
-        name: "Você",
-        email: currentUser?.email || "usuario@email.com",
-        points: 2450,
-        level: 8,
-        trilhasCompletas: 3,
-        mentoriasRealizadas: 5,
-        position: 5,
-        badge: "Explorador",
-        avatar: "VC",
-      },
-      {
-        id: 6,
-        name: "Pedro Lima",
-        email: "pedro@email.com",
-        points: 2100,
-        level: 7,
-        trilhasCompletas: 4,
-        mentoriasRealizadas: 3,
-        position: 6,
-        badge: "Iniciante Plus",
-        avatar: "PL",
-      },
-      {
-        id: 7,
-        name: "Lucia Ferreira",
-        email: "lucia@email.com",
-        points: 1850,
-        level: 6,
-        trilhasCompletas: 2,
-        mentoriasRealizadas: 7,
-        position: 7,
-        badge: "Aprendiz",
-        avatar: "LF",
-      },
-      {
-        id: 8,
-        name: "Rafael Souza",
-        email: "rafael@email.com",
-        points: 1600,
-        level: 5,
-        trilhasCompletas: 3,
-        mentoriasRealizadas: 2,
-        position: 8,
-        badge: "Novato",
-        avatar: "RS",
-      },
-    ]
-
     setRanking(mockRanking)
-  }, [currentUser])
+  }, [])
 
   const getBadgeColor = (badge: string) => {
     switch (badge) {
@@ -205,8 +85,8 @@ export default function RankingPage() {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Sistema de Gamificação</h1>
-          <p className="text-gray-600">Acompanhe seu progresso e compete com outros usuários</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">TrilhaXP</h1>
+          <p className="text-gray-600">Acompanhe seu progresso, conquiste medalhas e mostre seu destaque. Os melhores colocados aparecem no topo — e no radar das empresas.</p>
         </div>
 
         {/* Stats do Usuário */}

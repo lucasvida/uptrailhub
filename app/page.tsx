@@ -385,15 +385,11 @@ export default function LearningHub() {
                 <div className="space-y-3">
                   <div className="flex items-center">
                     <Check className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" />
-                    <span className="text-sm">5 trilhas mensais personalizadas</span>
-                  </div>
-                  <div className="flex items-center">
-                    <Check className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" />
                     <span className="text-sm">Trilhas gratuitas</span>
                   </div>
                   <div className="flex items-center">
                     <Check className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" />
-                    <span className="text-sm">1 mentoria gratuita única</span>
+                    <span className="text-sm">1 mentoria gratuita</span>
                   </div>
                   <div className="flex items-center">
                     <Check className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" />
@@ -451,6 +447,10 @@ export default function LearningHub() {
                   <div className="flex items-center">
                     <Check className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" />
                     <span className="text-sm font-medium">Acesso ilimitado às empresas que oferecem oportunidades de emprego</span>
+                  </div>
+                  <div className="flex items-center">
+                    <Check className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" />
+                    <span className="text-sm font-medium">Recomendação de trilhas de acordo com as vagas.</span>
                   </div>
                   <div className="flex items-center">
                     <Check className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" />
